@@ -4,9 +4,6 @@ declare(strict_types = 1);
 namespace cusodede\DefaultController;
 
 use cusodede\DefaultController\Actions\EditableFieldAction;
-use app\models\sys\permissions\filters\PermissionFilter;
-use app\modules\import\models\ImportAction;
-use app\modules\import\models\ImportStatusAction;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\traits\traits\ControllerTrait;
 use Yii;
@@ -82,6 +79,7 @@ class DefaultController extends Controller {
 		}
 		return parent::beforeAction($action);
 	}
+
 	/**
 	 * @inheritDoc
 	 */
@@ -97,13 +95,9 @@ class DefaultController extends Controller {
 			[
 				'class' => AjaxFilter::class,
 				'only' => ['ajax-search']
-			],
-			'access' => [
-				'class' => PermissionFilter::class
 			]
 		];
 	}
-
 
 	/**
 	 * @inheritDoc
