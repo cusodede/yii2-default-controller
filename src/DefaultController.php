@@ -3,11 +3,18 @@ declare(strict_types = 1);
 
 namespace cusodede\DefaultController;
 
-use app\components\helpers\ArrayHelper;
+use cusodede\DefaultController\Actions\EditableFieldAction;
+use app\models\sys\permissions\filters\PermissionFilter;
+use app\modules\import\models\ImportAction;
+use app\modules\import\models\ImportStatusAction;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\traits\traits\ControllerTrait;
 use Yii;
+use yii\filters\AjaxFilter;
+use yii\filters\ContentNegotiator;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\Response;
 
 /**
  * This is just an example.
@@ -74,5 +81,39 @@ class DefaultController extends Controller {
 
 		}
 		return parent::beforeAction($action);
+	}
+	/**
+	 * @inheritDoc
+	 */
+	public function behaviors():array {
+		return [
+			[
+				'class' => ContentNegotiator::class,
+				'only' => ['ajax-search'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON
+				]
+			],
+			[
+				'class' => AjaxFilter::class,
+				'only' => ['ajax-search']
+			],
+			'access' => [
+				'class' => PermissionFilter::class
+			]
+		];
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function actions():array {
+		return ArrayHelper::merge(parent::actions(), [
+			'editAction' => [
+				'class' => EditableFieldAction::class,
+				'modelClass' => $this->modelClass
+			],
+		]);
 	}
 }
