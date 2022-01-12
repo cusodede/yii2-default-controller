@@ -6,7 +6,11 @@ namespace cusodede\DefaultController;
 use cusodede\DefaultController\Actions\EditableFieldAction;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\traits\traits\ControllerTrait;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Throwable;
 use Yii;
+use yii\base\UnknownClassException;
 use yii\filters\AjaxFilter;
 use yii\filters\ContentNegotiator;
 use yii\helpers\ArrayHelper;
@@ -109,5 +113,32 @@ class DefaultController extends Controller {
 				'modelClass' => $this->modelClass
 			],
 		]);
+	}
+
+	/**
+	 * Генерирует меню для доступа ко всем контроллерам по указанному пути
+	 * @param string $alias
+	 * @return array
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 */
+	public static function MenuItems(string $alias = "@app/controllers"):array {
+		$items = [];
+		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(Yii::getAlias($alias)), RecursiveIteratorIterator::SELF_FIRST);
+		/** @var RecursiveDirectoryIterator $file */
+		foreach ($files as $file) {
+			/** @var self $model */
+			if ($file->isFile()
+				&& ('php' === $file->getExtension())
+				&& (null !== $model = ControllerHelper::LoadControllerClassFromFile($file->getRealPath(), null, [self::class]))
+				&& $model->enablePrototypeMenu) {
+				$items[] = [
+					'label' => $model->id,
+					'url' => [$model::to($model->defaultAction)],
+					'model' => $model,
+				];
+			}
+		}
+		return $items;
 	}
 }
