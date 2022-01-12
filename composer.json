@@ -1,19 +1,23 @@
 {
-    "name": "cusodede/yii2-default-controller",
-    "description": "Default Controller",
-    "type": "yii2-extension",
-    "keywords": ["yii2","extension","default controller"],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Anton Shevelev",
-            "email": "AYuShevelev@beeline.ru"
-        },
+	"name": "cusodede/yii2-default-controller",
+	"description": "Default Controller",
+	"type": "yii2-extension",
+	"keywords": [
+		"yii2",
+		"extension",
+		"default controller"
+	],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Anton Shevelev",
+			"email": "AYuShevelev@beeline.ru"
+		},
 		{
 			"name": "Michaei Krasnopeev",
 			"email": "MKrasnopeev@beeline.ru"
 		}
-    ],
+	],
 	"require": {
 		"php": ">=8.0",
 		"yiisoft/yii2": "~2.0.0",
@@ -24,9 +28,9 @@
 		"pozitronik/yii2-grid-config": "dev-master",
 		"kartik-v/yii2-krajee-base": ">=3.0"
 	},
-    "autoload": {
-        "psr-4": {
-            "cusodede\\DefaultController\\": "src"
-        }
-    }
+	"autoload": {
+		"psr-4": {
+			"cusodede\\DefaultController\\": "src"
+		}
+	}
 }
