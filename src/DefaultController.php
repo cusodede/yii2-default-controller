@@ -6,11 +6,15 @@ namespace cusodede\DefaultController;
 use app\components\db\ActiveRecordTrait;
 use cusodede\DefaultController\Actions\EditableFieldAction;
 use pozitronik\helpers\ControllerHelper;
+use pozitronik\helpers\ReflectionHelper;
 use pozitronik\traits\traits\ControllerTrait;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use ReflectionException;
 use Throwable;
 use Yii;
+use yii\base\InvalidCallException;
+use yii\base\InvalidConfigException;
 use yii\base\UnknownClassException;
 use yii\db\ActiveRecord;
 use yii\filters\AjaxFilter;
@@ -112,6 +116,27 @@ class DefaultController extends Controller {
 				'only' => ['ajax-search']
 			]
 		];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getViewPath():string {
+		return '@cusodede/DefaultController/views/site';
+	}
+
+	/**
+	 * @return ActiveRecord
+	 */
+	public function getModel():ActiveRecord {
+		return (new $this->modelClass());
+	}
+
+	/**
+	 * @return ActiveRecord
+	 */
+	public function getSearchModel():ActiveRecord {
+		return (new $this->modelSearchClass());
 	}
 
 	/**
@@ -286,5 +311,52 @@ class DefaultController extends Controller {
 			$out['results'] = array_values($data);
 		}
 		return $out;
+	}
+
+	/**
+	 * @return string|Response
+	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws UnknownClassException
+	 * @noinspection PhpPossiblePolymorphicInvocationInspection
+	 */
+	public function actionIndex() {
+		$params = Yii::$app->request->queryParams;
+		$searchModel = $this->searchModel;
+		$viewParams = [
+			'searchModel' => $searchModel,
+			'dataProvider' => $searchModel->search($params),
+			'controller' => $this,
+			'modelName' => $this->model->formName(),
+			'model' => $this->model,
+		];
+
+		if (Yii::$app->request->isAjax) {
+			return $this->viewExists($this->viewPath.'modal/index')  /*если модальной вьюхи для индекса не найдено - редирект*/
+				?$this->renderAjax('modal/index', $viewParams)
+				:$this->redirect(static::to('index'));/*параметры неважны - редирект произойдёт в modalHelper.js*/
+		}
+
+		return $this->render('index', $viewParams);
+	}
+
+	/**
+	 * Проверяет, существует ли указанная вьюха. Для того, чтобы не дублировать закрытый метод фреймворка, хачим его
+	 * через рефлексию.
+	 * @param string $view
+	 * @return bool
+	 * @throws UnknownClassException
+	 * @throws ReflectionException
+	 */
+	protected function viewExists(string $view):bool {
+		if (null === $findViewFileReflectionMethod = ReflectionHelper::setAccessible($this->view, 'findViewFile')) {
+			return false;
+		}
+
+		try {
+			return file_exists($findViewFileReflectionMethod->invoke($this->view, $view));
+		} catch (InvalidCallException) {
+			return false;
+		}
 	}
 }
