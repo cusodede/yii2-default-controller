@@ -3,10 +3,10 @@ declare(strict_types = 1);
 
 namespace cusodede\DefaultController;
 
-use app\components\db\ActiveRecordTrait;
 use cusodede\DefaultController\Actions\EditableFieldAction;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
+use pozitronik\traits\traits\ActiveRecordTrait;
 use pozitronik\traits\traits\ControllerTrait;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -16,6 +16,7 @@ use Yii;
 use yii\base\InvalidCallException;
 use yii\base\InvalidConfigException;
 use yii\base\UnknownClassException;
+use yii\base\UnknownPropertyException;
 use yii\db\ActiveRecord;
 use yii\filters\AjaxFilter;
 use yii\filters\ContentNegotiator;
@@ -85,7 +86,8 @@ class DefaultController extends Controller {
 	 * {@inheritdoc}
 	 */
 	public function beforeAction($action):bool {
-		$this->view->title = $this->view->title??ArrayHelper::getValue(static::ACTION_TITLES, $action->id, self::Title());
+		$this->view->title = $this->view->title??ArrayHelper::getValue(static::ACTION_TITLES, $action->id,
+				self::Title());
 		if (!isset($this->view->params['breadcrumbs'])) {
 			if ($this->defaultAction === $action->id) {
 				$this->view->params['breadcrumbs'][] = self::Title();
@@ -127,16 +129,22 @@ class DefaultController extends Controller {
 
 	/**
 	 * @return ActiveRecord
+	 * @throws UnknownPropertyException
 	 */
 	public function getModel():ActiveRecord {
-		return (new $this->modelClass());
+		return null !== $this->modelClass
+			?new $this->modelClass()
+			:throw new UnknownPropertyException('Не установлено свойство $modelClass');
 	}
 
 	/**
 	 * @return ActiveRecord
+	 * @throws UnknownPropertyException
 	 */
 	public function getSearchModel():ActiveRecord {
-		return (new $this->modelSearchClass());
+		return null !== $this->modelSearchClass
+			?new $this->modelSearchClass()
+			:throw new UnknownPropertyException('Не установлено свойство $modelSearchClass');
 	}
 
 	/**
@@ -160,13 +168,15 @@ class DefaultController extends Controller {
 	 */
 	public static function MenuItems(string $alias = "@app/controllers"):array {
 		$items = [];
-		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(Yii::getAlias($alias)), RecursiveIteratorIterator::SELF_FIRST);
+		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(Yii::getAlias($alias)),
+			RecursiveIteratorIterator::SELF_FIRST);
 		/** @var RecursiveDirectoryIterator $file */
 		foreach ($files as $file) {
 			/** @var self $model */
 			if ($file->isFile()
 				&& ('php' === $file->getExtension())
-				&& (null !== $model = ControllerHelper::LoadControllerClassFromFile($file->getRealPath(), null, [self::class]))
+				&& (null !== $model = ControllerHelper::LoadControllerClassFromFile($file->getRealPath(), null,
+						[self::class]))
 				&& $model->enablePrototypeMenu) {
 				$items[] = [
 					'label' => $model->id,
