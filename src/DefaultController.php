@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace cusodede\DefaultController;
 
+use app\components\db\ActiveRecordTrait;
 use cusodede\DefaultController\Actions\EditableFieldAction;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\traits\traits\ControllerTrait;
@@ -11,14 +12,24 @@ use RecursiveIteratorIterator;
 use Throwable;
 use Yii;
 use yii\base\UnknownClassException;
+use yii\db\ActiveRecord;
 use yii\filters\AjaxFilter;
 use yii\filters\ContentNegotiator;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * This is just an example.
+ * Class DefaultController
+ * Все контроллеры и все вью плюс-минус одинаковые, поэтому можно сэкономить на прототипировании
+ * @property string $modelClass Модель, обслуживаемая контроллером
+ * @property string $modelSearchClass Поисковая модель, обслуживаемая контроллером
+ * @property bool $enablePrototypeMenu Включать ли контроллер в меню списка прототипов
+ *
+ * @property-read ActiveRecord $searchModel
+ * @property-read ActiveRecord|ActiveRecordTrait $model
  */
 class DefaultController extends Controller {
 	use ControllerTrait;
@@ -140,5 +151,140 @@ class DefaultController extends Controller {
 			}
 		}
 		return $items;
+	}
+
+	/**
+	 * Текущий запрос - ajax-валидация формы?
+	 * Метод делается публичной статикой, он нужен не только в наследниках
+	 * @return bool
+	 */
+	public static function isAjaxValidationRequest():bool {
+		return null !== Yii::$app->request->post('ajax');
+	}
+
+	/**
+	 * @param int $id
+	 * @return string
+	 * @throws Throwable
+	 */
+	public function actionView(int $id):string {
+		if (null === $model = $this->model::findOne($id)) {
+			throw new NotFoundHttpException();
+		}
+		return Yii::$app->request->isAjax
+			?$this->renderAjax('modal/view', compact('model'))
+			:$this->render('view', compact('model'));
+	}
+
+	/**
+	 * @param int $id
+	 * @return string|Response
+	 * @throws Throwable
+	 */
+	public function actionEdit(int $id) {
+		if (null === $model = $this->model::findOne($id)) {
+			throw new NotFoundHttpException();
+		}
+
+		/** @var ActiveRecordTrait $model */
+		if (static::isAjaxValidationRequest()) {
+			return $this->asJson($model->validateModelFromPost());
+		}
+
+		$errors = [];
+		$posting = $model->updateModelFromPost($errors);
+
+		return match (true) {
+			/* Модель была успешно прогружена */
+			true === $posting => $this->redirect('index'),
+			/* Пришёл постинг, но есть ошибки */
+			(false === $posting) && Yii::$app->request->isAjax => $this->asJson($errors),
+			/* Постинга не было */
+			Yii::$app->request->isAjax => $this->renderAjax('modal/edit', compact('model')),
+			default => $this->render('edit', compact('model')),
+		};
+	}
+
+	/**
+	 * @return string|Response
+	 * @throws Throwable
+	 */
+	public function actionCreate() {
+		$model = $this->model;
+		if (static::isAjaxValidationRequest()) {
+			return $this->asJson($model->validateModelFromPost());
+		}
+
+		$errors = [];
+		$posting = $model->createModelFromPost($errors);/* switch тут нельзя использовать из-за его нестрогости */
+
+		return match (true) {
+			/* Модель была успешно прогружена */
+			true === $posting => $this->redirect('index'),
+			/* Пришёл постинг, но есть ошибки */
+			(false === $posting) && Yii::$app->request->isAjax => $this->asJson($errors),
+			/* Постинга не было */
+			Yii::$app->request->isAjax => $this->renderAjax('modal/create', compact('model')),
+			default => $this->render('create', compact('model')),
+		};
+	}
+
+	/**
+	 * @param int $id
+	 * @return Response
+	 * @throws Throwable
+	 */
+	public function actionDelete(int $id):Response {
+		if (null === $model = $this->model::findOne($id)) {
+			throw new NotFoundHttpException();
+		}
+		/** @var ActiveRecordTrait $model */
+		$model->safeDelete();
+		return $this->redirect('index');
+	}
+
+	/**
+	 * Аяксовый поиск в Select2
+	 * @param string|null $term
+	 * @param string $column
+	 * @param string|null $concatFields Это список полей для конкатенации. Если этот параметр передан, то вернем
+	 * результат CONCAT() для этих полей вместо поля параметра $column
+	 * @return string[][]
+	 * @throws ForbiddenHttpException
+	 * @throws Throwable
+	 */
+	public function actionAjaxSearch(?string $term, string $column = 'name', string $concatFields = null):array {
+		$out = [
+			'results' => [
+				'id' => '',
+				'text' => ''
+			]
+		];
+		if (null !== $term) {
+			$tableName = $this->model::tableName();
+			if ($concatFields) {
+				// добавляем название таблицы перед каждым полем
+				$concatFieldsArray = preg_filter('/^/', "{$tableName}.", explode(',', $concatFields));
+				// CONCAT возвращает пустое значение если хотя бы одно из полей NULL
+				$concatFieldsArray = array_map(static function($item) {
+					return 'COALESCE('.$item.", '')";
+				}, $concatFieldsArray);
+				// пихаем COALESCE в  CONCAT() функцию.
+				// Конечный формат: SELECT DISTINCT `table`.`id`, CONCAT(COALESCE(table.a, ''), ' ', COALESCE(table.b, ''), ' ',COALESCE(table.c, '')) AS `text`
+				$textFields = 'CONCAT('.implode(",' ',", $concatFieldsArray).')';
+			} else {
+				$textFields = "{$tableName}.{$column}";
+			}
+			$data = $this->model::find()
+				->select(["{$tableName}.{$this->primaryColumnName}", "{$textFields} as text"])
+				->where(['like', "{$tableName}.{$column}", "%$term%", false])
+				->active()
+				->distinct()
+				->scope()
+				->asArray()
+				->all();
+			$out['results'] = array_values($data);
+		}
+		return $out;
 	}
 }
