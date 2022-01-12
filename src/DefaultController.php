@@ -217,14 +217,7 @@ class DefaultController extends Controller {
 	 * @throws Throwable
 	 */
 	public function actionEdit(int $id) {
-		if (null === $model = $this->model::findOne($id)) {
-			throw new NotFoundHttpException();
-		}
-
-		/** @var ActiveRecordTrait $model */
-		if (static::isAjaxValidationRequest()) {
-			return $this->asJson($model->validateModelFromPost());
-		}
+		$model = $this->getModelByIdOrFail($id);
 
 		$errors = [];
 		$posting = $model->updateModelFromPost($errors);
@@ -368,5 +361,14 @@ class DefaultController extends Controller {
 		} catch (InvalidCallException) {
 			return false;
 		}
+	}
+
+	/**
+	 * @param int $id
+	 * @return mixed|ActiveRecord
+	 * @throws NotFoundHttpException
+	 */
+	protected function getModelByIdOrFail(int $id) {
+		return $this->model::findOne($id) ?: throw new NotFoundHttpException();
 	}
 }
