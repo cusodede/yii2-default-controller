@@ -17,7 +17,8 @@
 	"require": {
 		"php": ">=8.0",
 		"yiisoft/yii2": "~2.0.0",
-		"pozitronik/yii2-helpers": "*"
+		"pozitronik/yii2-helpers": "*",
+		"pozitronik/yii2-traits": "*"
 	},
     "autoload": {
         "psr-4": {
