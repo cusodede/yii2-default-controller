@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c416837205076bf5d6d2fde8ae972662",
+    "content-hash": "7a40c4d795999664f55baade3f3c008c",
     "packages": [
         {
             "name": "kartik-v/yii2-dialog",
@@ -1277,7 +1277,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "pozitronik/yii2-helpers": 20,
         "pozitronik/yii2-traits": 20,
         "pozitronik/yii2-badgewidget": 20,
         "pozitronik/yii2-grid-config": 20,
