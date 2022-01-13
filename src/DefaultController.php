@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace cusodede\DefaultController;
 
 use cusodede\DefaultController\Actions\EditableFieldAction;
+use pozitronik\helpers\BootstrapHelper;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
 use pozitronik\traits\traits\ActiveRecordTrait;
@@ -126,7 +127,7 @@ class DefaultController extends Controller {
 	 * @inheritDoc
 	 */
 	public function getViewPath():string {
-		return '@cusodede/DefaultController/views/site';
+		return '@cusodede/DefaultController/views/site'.DIRECTORY_SEPARATOR.(BootstrapHelper::isBs4()?'bs4':'bs3');
 	}
 
 	/**

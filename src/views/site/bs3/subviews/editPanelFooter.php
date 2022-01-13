@@ -8,8 +8,8 @@ declare(strict_types = 1);
  */
 
 use yii\base\Model;
-use yii\bootstrap4\ActiveForm;
-use yii\bootstrap4\Html;
+use yii\bootstrap\ActiveForm;
+use yii\bootstrap\Html;
 use yii\web\View;
 
 ?>

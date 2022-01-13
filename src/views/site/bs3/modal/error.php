@@ -8,7 +8,7 @@ declare(strict_types = 1);
  * Вью, отрабатывающее при ошибке после ajax-запроса, @see \cusodede\DefaultController\Actions\ErrorAction
  */
 
-use yii\bootstrap4\Modal;
+use yii\bootstrap\Modal;
 use yii\helpers\BaseHtml as Html;
 use yii\web\HttpException;
 use yii\web\View;

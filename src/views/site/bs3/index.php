@@ -25,6 +25,7 @@ AssetBundle::register($this);
 
 $id = "{$modelName}-index-grid";
 ?>
+	<h1>BS3</h1>
 <?= GridConfig::widget([
 	'id' => $id,
 	'grid' => GridView::begin([

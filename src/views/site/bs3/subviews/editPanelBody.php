@@ -9,7 +9,7 @@ declare(strict_types = 1);
 
 use kartik\base\Html5Input;
 use yii\base\Model;
-use yii\bootstrap4\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\web\View;
 
 ?>

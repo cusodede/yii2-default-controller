@@ -1,21 +1,21 @@
-<?php /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+<?php
 declare(strict_types = 1);
 
 /**
  * @var View $this
  * @var Model $model
  */
+
 use pozitronik\widgets\BadgeWidget;
 use yii\base\Model;
-use yii\bootstrap4\ActiveForm;
-use yii\bootstrap4\Modal;
+use yii\bootstrap\ActiveForm;
+use yii\bootstrap\Modal;
 use yii\web\View;
 
 $modelName = $model->formName();
 ?>
-<?php
-Modal::begin([
-	'id' => "{$modelName}-modal-edit-{$model->id}",
+<?php Modal::begin([
+	'id' => "{$modelName}-modal-create-new",
 	'size' => Modal::SIZE_LARGE,
 	'title' => BadgeWidget::widget([
 		'items' => $model,
@@ -23,7 +23,7 @@ Modal::begin([
 	]),
 	'footer' => $this->render('../subviews/editPanelFooter', [
 		'model' => $model,
-		'form' => "{$modelName}-modal-edit"
+		'form' => "{$modelName}-modal-create"
 	]),//post button outside the form
 	'options' => [
 		'tabindex' => false, // important for Select2 to work properly
@@ -32,7 +32,7 @@ Modal::begin([
 ]); ?>
 <?php $form = ActiveForm::begin(
 	[
-		'id' => "{$modelName}-modal-edit",
+		'id' => "{$modelName}-modal-create",
 		'enableAjaxValidation' => true,
 
 	])

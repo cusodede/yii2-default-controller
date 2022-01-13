@@ -7,11 +7,10 @@ declare(strict_types = 1);
  */
 
 use yii\base\Model;
-use yii\bootstrap4\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\web\View;
 
 ?>
-
 <?php if (Yii::$app->session->hasFlash('success')): ?>
 	<div class="alert alert-success alert-dismissable">
 		<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
