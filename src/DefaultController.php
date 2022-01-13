@@ -353,7 +353,7 @@ class DefaultController extends Controller {
 		];
 
 		if (Yii::$app->request->isAjax) {
-			return $this->viewExists($this->viewPath.'modal/index')  /*если модальной вьюхи для индекса не найдено - редирект*/
+			return $this->viewExists($this->viewPath.'modal/index') /*если модальной вьюхи для индекса не найдено - редирект*/
 				?$this->renderAjax('modal/index', $viewParams)
 				:$this->redirect(static::to('index'));/*параметры неважны - редирект произойдёт в modalHelper.js*/
 		}
