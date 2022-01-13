@@ -21,11 +21,9 @@
 	"minimum-stability": "dev",
 	"require": {
 		"php": ">=8.0",
-		"pozitronik/yii2-helpers": "dev-master",
 		"pozitronik/yii2-traits": "dev-master",
 		"pozitronik/yii2-badgewidget": "dev-master",
 		"pozitronik/yii2-grid-config": "dev-master",
-		"kartik-v/yii2-krajee-base": ">=3.0",
 		"kartik-v/yii2-grid": "dev-master"
 	},
 	"require-dev": {
