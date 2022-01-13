@@ -1,8 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace cusodede\DefaultController\Actions;
+namespace cusodede\web\default_controller\models\actions;
 
+use cusodede\web\default_controller\helpers\ErrorHelper;
 use pozitronik\traits\traits\ActiveRecordTrait;
 use Throwable;
 use Yii;
@@ -46,24 +47,10 @@ class EditableFieldAction extends Action {
 		$model->scenario = $this->scenario;
 
 		if ($model->load(Yii::$app->request->post()) && !$model->save()) {
-			$result = ['output' => '', 'message' => self::Errors2String($model->getErrors(), '<br>')];
+			$result = ['output' => '', 'message' => ErrorHelper::Errors2String($model->getErrors(), '<br>')];
 		}
 
 		return Yii::createObject(['class' => Response::class, 'format' => Response::FORMAT_JSON, 'data' => $result]);
 	}
 
-	/**
-	 * @param array $errors
-	 * @param array|string $separator
-	 * @return string
-	 */
-	public static function Errors2String(array $errors, array|string $separator = "\n"):string {
-		$output = [];
-		foreach ($errors as $attribute => $attributeErrors) {
-			$error = is_array($attributeErrors)?implode($separator, $attributeErrors):$attributeErrors;
-			$output[] = "{$attribute}: {$error}";
-		}
-
-		return implode($separator, $output);
-	}
 }
