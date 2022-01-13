@@ -5,7 +5,7 @@ declare(strict_types = 1);
  * @var View $this
  * @var HttpException $exception
  *
- * Вью, отрабатывающее при ошибке после ajax-запроса, @see \cusodede\DefaultController\Actions\ErrorAction
+ * Вью, отрабатывающее при ошибке после ajax-запроса, @see ErrorAction
  */
 
 use yii\bootstrap4\Modal;
