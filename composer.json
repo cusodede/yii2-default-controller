@@ -33,7 +33,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"cusodede\\DefaultController\\": "src"
+			"cusodede\\web\\default_controller\\": "src"
 		}
 	},
 	"repositories": [
