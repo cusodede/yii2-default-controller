@@ -3,11 +3,10 @@ declare(strict_types = 1);
 
 namespace cusodede\web\default_controller\models;
 
-use cusodede\web\default_controller\helpers\ControllerHelper as ComponentControllerHelper;
-use cusodede\web\default_controller\helpers\ErrorHelper;
+use cusodede\web\default_controller\helpers\ControllerHelper;
 use cusodede\web\default_controller\models\actions\EditableFieldAction;
 use pozitronik\helpers\BootstrapHelper;
-use pozitronik\helpers\ControllerHelper;
+use pozitronik\helpers\ControllerHelper as VendorControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
 use pozitronik\traits\traits\ControllerTrait;
 use RecursiveDirectoryIterator;
@@ -82,7 +81,7 @@ class DefaultController extends Controller {
 	 * @return string
 	 */
 	public static function Title():string {
-		return static::DEFAULT_TITLE??ControllerHelper::ExtractControllerId(static::class);
+		return static::DEFAULT_TITLE??VendorControllerHelper::ExtractControllerId(static::class);
 	}
 
 	/**
@@ -189,7 +188,7 @@ class DefaultController extends Controller {
 			/** @var self $model */
 			if ($file->isFile()
 				&& ('php' === $file->getExtension())
-				&& (null !== $model = ControllerHelper::LoadControllerClassFromFile($file->getRealPath(), null, [self::class]))
+				&& (null !== $model = VendorControllerHelper::LoadControllerClassFromFile($file->getRealPath(), null, [self::class]))
 				&& $model->enablePrototypeMenu) {
 				$items[] = [
 					'label' => $model->id,
@@ -235,17 +234,20 @@ class DefaultController extends Controller {
 	 */
 	public function actionCreate() {
 		$model = $this->model;
-
-		if ($model->load(Yii::$app->request->post())) {
-			if (!$model->save()) {
-				Yii::$app->session->setFlash('error', ErrorHelper::Errors2String($model->getErrors(), '<br>'));
-				return $this->redirect(['create']);
-			}
-			Yii::$app->session->setFlash('success');
-			return $this->redirect(['edit', ComponentControllerHelper::getModelPKName($model) => ComponentControllerHelper::getModelPKValue($model)]);
+		if (ControllerHelper::isAjaxValidationRequest()) {
+			return $this->asJson(ControllerHelper::validateModelFromPost($model));
 		}
-
-		return Yii::$app->request->isAjax
+		$errors = [];
+		$posting = ControllerHelper::createModelFromPost($model, $errors);/* switch тут нельзя использовать из-за его нестрогости */
+		if (true === $posting) {/* Модель была успешно прогружена */
+			return $this->redirect('index');
+		}
+		/* Пришёл постинг, но есть ошибки */
+		if ((false === $posting) && Yii::$app->request->isAjax) {
+			return $this->asJson($errors);
+		}
+		/* Постинга не было */
+		return (Yii::$app->request->isAjax)
 			?$this->renderAjax('modal/create', compact('model'))
 			:$this->render('create', compact('model'));
 	}
@@ -265,22 +267,27 @@ class DefaultController extends Controller {
 
 	/**
 	 * @param int $id
-	 * @return string
+	 * @return string|Response
 	 * @throws Throwable
 	 */
-	public function actionEdit(int $id):string {
+	public function actionEdit(int $id) {
 		$model = $this->getModelByPKOrFail($id);
 
-		if ($model->load(Yii::$app->request->post())) {
-			if ($model->save()) {
-				Yii::$app->session->setFlash('success');
-			} else {
-				Yii::$app->session->setFlash('error', ErrorHelper::Errors2String($model->getErrors(), '<br>'));
-			}
-			Yii::$app->session->setFlash('error', ErrorHelper::Errors2String($model->getErrors(), '<br>'));
+		if (ControllerHelper::isAjaxValidationRequest()) {
+			return $this->asJson(ControllerHelper::validateModelFromPost($model));
 		}
+		$errors = [];
+		$posting = ControllerHelper::createModelFromPost($model, $errors);
 
-		return Yii::$app->request->isAjax
+		if (true === $posting) {/* Модель была успешно прогружена */
+			return $this->redirect('index');
+		}
+		/* Пришёл постинг, но есть ошибки */
+		if ((false === $posting) && Yii::$app->request->isAjax) {
+			return $this->asJson($errors);
+		}
+		/* Постинга не было */
+		return (Yii::$app->request->isAjax)
 			?$this->renderAjax('modal/edit', compact('model'))
 			:$this->render('edit', compact('model'));
 	}
@@ -351,7 +358,7 @@ class DefaultController extends Controller {
 				->distinct();
 
 			if ($this->hasMethod($query, 'active')) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection*/
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$query->active();
 			}
 
