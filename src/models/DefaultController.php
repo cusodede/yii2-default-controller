@@ -1,9 +1,10 @@
 <?php
 declare(strict_types = 1);
 
-namespace cusodede\DefaultController;
+namespace cusodede\web\default_controller\models;
 
-use cusodede\DefaultController\Actions\EditableFieldAction;
+use cusodede\web\default_controller\helpers\ErrorHelper;
+use cusodede\web\default_controller\models\actions\EditableFieldAction;
 use pozitronik\helpers\BootstrapHelper;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
@@ -17,15 +18,14 @@ use Yii;
 use yii\base\InvalidCallException;
 use yii\base\InvalidConfigException;
 use yii\base\UnknownClassException;
-use yii\base\UnknownPropertyException;
-use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
+use yii\db\ActiveRecordInterface;
 use yii\db\QueryInterface;
 use yii\filters\AjaxFilter;
 use yii\filters\ContentNegotiator;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
-use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -36,15 +36,15 @@ use yii\web\Response;
  * @property string $modelSearchClass Поисковая модель, обслуживаемая контроллером
  * @property bool $enablePrototypeMenu Включать ли контроллер в меню списка прототипов
  *
- * @property-read ActiveRecord $searchModel
- * @property-read ActiveRecord|ActiveRecordTrait $model
+ * @property-read ActiveRecordInterface $searchModel
+ * @property-read ActiveRecordInterface $model
  */
 class DefaultController extends Controller {
 	use ControllerTrait;
 
 	/**
 	 * @var string название поля с первичным ключом.
-	 * Конечно ключ может быть составным, но пока таких случаев не встречалось
+	 * Конечно ключ может быть составным, но пока таких случаев не встречалось.
 	 */
 	protected string $primaryColumnName = 'id';
 
@@ -59,6 +59,7 @@ class DefaultController extends Controller {
 	protected const ACTION_TITLES = [
 		'view' => 'Просмотр',
 		'edit' => 'Редактирование',
+		'update' => 'Редактирование',
 		'create' => 'Создание',
 		'import' => 'Загрузка',
 		'import-status' => 'Статус загрузки'
@@ -83,6 +84,14 @@ class DefaultController extends Controller {
 	 */
 	public static function Title():string {
 		return static::DEFAULT_TITLE??ControllerHelper::ExtractControllerId(static::class);
+	}
+
+	/**
+	 * @return string
+	 * @throws InvalidConfigException
+	 */
+	public static function ViewPath():string {
+		return '@cusodede/web/default_controller/views/site'.DIRECTORY_SEPARATOR.(BootstrapHelper::isBs4()?'bs4':'bs3');
 	}
 
 	/**
@@ -127,27 +136,31 @@ class DefaultController extends Controller {
 	 * @inheritDoc
 	 */
 	public function getViewPath():string {
-		return '@cusodede/DefaultController/views/site'.DIRECTORY_SEPARATOR.(BootstrapHelper::isBs4()?'bs4':'bs3');
+		return static::ViewPath();
 	}
 
 	/**
-	 * @return ActiveRecord
-	 * @throws UnknownPropertyException
+	 * @return ActiveRecordInterface
+	 * @throws InvalidConfigException(
 	 */
-	public function getModel():ActiveRecord {
+	public function getModel():ActiveRecordInterface {
 		return null !== $this->modelClass
 			?new $this->modelClass()
-			:throw new UnknownPropertyException('Не установлено свойство $modelClass');
+			:throw new InvalidConfigException('Не установлено свойство $modelClass');
 	}
 
 	/**
-	 * @return ActiveRecord
-	 * @throws UnknownPropertyException
+	 * @return ActiveRecordInterface
+	 * @throws InvalidConfigException(
 	 */
-	public function getSearchModel():ActiveRecord {
-		return null !== $this->modelSearchClass
-			?new $this->modelSearchClass()
-			:throw new UnknownPropertyException('Не установлено свойство $modelSearchClass');
+	public function getSearchModel():ActiveRecordInterface {
+		if (null !== $this->modelSearchClass) {
+			throw new InvalidConfigException('Не установлено свойство $modelSearchClass');
+		}
+		if (!method_exists($this->modelSearchClass, 'search')) {
+			throw new InvalidConfigException("Класс {$this->modelSearchClass} должен иметь метод search()");
+		}
+		return new $this->modelSearchClass();
 	}
 
 	/**
@@ -214,28 +227,30 @@ class DefaultController extends Controller {
 	}
 
 	/**
-	 * @TODO: Костыль так как по умолчанию используется экшн апдейт, а нам нужен экшн едит
+	 * actionEdit <==> actionUpdate
 	 * @param int $id
-	 * @return Response
+	 * @return string
+	 * @throws Throwable
 	 */
-	public function actionUpdate(int $id) {
-		return $this->redirect(['edit', 'id' => $id]);
+	public function actionUpdate(int $id):string {
+		return $this->actionEdit($id);
 	}
 
 	/**
 	 * @param int $id
-	 * @return string|Response
+	 * @return string
 	 * @throws Throwable
 	 */
-	public function actionEdit(int $id) {
-		$model = $this->getModelByIdOrFail($id);
+	public function actionEdit(int $id):string {
+		$model = $this->getModelByPKOrFail($id);
 
 		if ($model->load(Yii::$app->request->post())) {
-			if (!$model->save()) {
-				Yii::$app->session->setFlash('error', EditableFieldAction::Errors2String($model->getErrors(), '<br>'));
-			} else {
+			if ($model->save()) {
 				Yii::$app->session->setFlash('success');
+			} else {
+				Yii::$app->session->setFlash('error', ErrorHelper::Errors2String($model->getErrors(), '<br>'));
 			}
+			Yii::$app->session->setFlash('error', ErrorHelper::Errors2String($model->getErrors(), '<br>'));
 		}
 
 		return Yii::$app->request->isAjax
@@ -252,7 +267,7 @@ class DefaultController extends Controller {
 
 		if ($model->load(Yii::$app->request->post())) {
 			if (!$model->save()) {
-				Yii::$app->session->setFlash('error', EditableFieldAction::Errors2String($model->getErrors(), '<br>'));
+				Yii::$app->session->setFlash('error',ErrorHelper::Errors2String($model->getErrors(), '<br>'));
 				return $this->redirect(['create']);
 			}
 			Yii::$app->session->setFlash('success');
@@ -324,10 +339,10 @@ class DefaultController extends Controller {
 
 	/**
 	 * Метод для дополнительных условий поиска аяксом
-	 * @param QueryInterface $query
-	 * @return ActiveQuery|QueryInterface
+	 * @param ActiveQueryInterface $query
+	 * @return ActiveQueryInterface
 	 */
-	protected function addAdditionalAjaxConditions(QueryInterface $query) {
+	protected function addAdditionalAjaxConditions(QueryInterface $query):ActiveQueryInterface {
 		return $query;
 	}
 
@@ -336,10 +351,12 @@ class DefaultController extends Controller {
 	 * @throws InvalidConfigException
 	 * @throws ReflectionException
 	 * @throws UnknownClassException
+	 * @noinspection PhpUndefinedMethodInspection Существование метода проверяется при инициализации поисковой модели
 	 */
 	public function actionIndex() {
 		$params = Yii::$app->request->queryParams;
-		$searchModel = $this->searchModel;
+		$searchModel = $this->getSearchModel();
+
 		$viewParams = [
 			'searchModel' => $searchModel,
 			'dataProvider' => $searchModel->search($params),
@@ -378,11 +395,29 @@ class DefaultController extends Controller {
 	}
 
 	/**
-	 * @param int $id
+	 * @param int $pk
 	 * @return mixed|ActiveRecord
 	 * @throws NotFoundHttpException
 	 */
-	protected function getModelByIdOrFail(int $id) {
-		return $this->model::findOne($id)?:throw new NotFoundHttpException();
+	protected function getModelByPKOrFail(int $pk) {
+		return $this->model::findOne($pk)?:throw new NotFoundHttpException();
+	}
+
+	/**
+	 * Вернуть название ключевого атрибута модели
+	 * @param ActiveRecordInterface $model
+	 * @return string|null
+	 */
+	protected static function getModelPKName(ActiveRecordInterface $model):?string {
+		return $model::primaryKey()[0]??null;
+	}
+
+	/**
+	 * Вернуть значение ключевого атрибута модели
+	 * @param ActiveRecordInterface $model
+	 * @return mixed
+	 */
+	protected static function getModelPKValue(ActiveRecordInterface $model):mixed {
+		return $model->{static::getModelPKName($model)};
 	}
 }
