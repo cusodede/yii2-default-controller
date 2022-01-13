@@ -3,8 +3,7 @@ declare(strict_types = 1);
 
 namespace cusodede\DefaultController\Actions;
 
-use app\components\db\ActiveRecordTrait;
-use app\components\helpers\TemporaryHelper;
+use pozitronik\traits\traits\ActiveRecordTrait;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -45,10 +44,27 @@ class EditableFieldAction extends Action {
 		}
 
 		$model->scenario = $this->scenario;
-		$errors = [];
-		if (!$model->updateModelFromPost($errors, false)) {
-			$result = ['output' => '', 'message' => TemporaryHelper::Errors2String($errors)];
+
+		if ($model->load(Yii::$app->request->post()) && !$model->save()) {
+			$result = ['output' => '', 'message' => self::Errors2String($model->getErrors(), '<br>')];
 		}
+
 		return Yii::createObject(['class' => Response::class, 'format' => Response::FORMAT_JSON, 'data' => $result]);
+	}
+
+	/**
+	 * Не придумал ничего лучше, чем копирнуть это из хелпера
+	 * @param array $errors
+	 * @param array|string $separator
+	 * @return string
+	 */
+	public static function Errors2String(array $errors, array|string $separator = "\n"):string {
+		$output = [];
+		foreach ($errors as $attribute => $attributeErrors) {
+			$error = is_array($attributeErrors)?implode($separator, $attributeErrors):$attributeErrors;
+			$output[] = "{$attribute}: {$error}";
+		}
+
+		return implode($separator, $output);
 	}
 }

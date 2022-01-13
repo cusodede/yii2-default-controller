@@ -17,7 +17,9 @@ use yii\base\InvalidCallException;
 use yii\base\InvalidConfigException;
 use yii\base\UnknownClassException;
 use yii\base\UnknownPropertyException;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\QueryInterface;
 use yii\filters\AjaxFilter;
 use yii\filters\ContentNegotiator;
 use yii\helpers\ArrayHelper;
@@ -212,6 +214,15 @@ class DefaultController extends Controller {
 	}
 
 	/**
+	 * @TODO: Костыль так как по умолчанию используется экшн апдейт, а нам нужен экшн едит
+	 * @param int $id
+	 * @return Response
+	 */
+	public function actionUpdate(int $id) {
+		return $this->redirect(['edit', 'id' => $id]);
+	}
+
+	/**
 	 * @param int $id
 	 * @return string|Response
 	 * @throws Throwable
@@ -219,18 +230,17 @@ class DefaultController extends Controller {
 	public function actionEdit(int $id) {
 		$model = $this->getModelByIdOrFail($id);
 
-		$errors = [];
-		$posting = $model->updateModelFromPost($errors);
+		if ($model->load(Yii::$app->request->post())) {
+			if (!$model->save()) {
+				Yii::$app->session->setFlash('error', EditableFieldAction::Errors2String($model->getErrors(), '<br>'));
+			} else {
+				Yii::$app->session->setFlash('success');
+			}
+		}
 
-		return match (true) {
-			/* Модель была успешно прогружена */
-			true === $posting => $this->redirect('index'),
-			/* Пришёл постинг, но есть ошибки */
-			(false === $posting) && Yii::$app->request->isAjax => $this->asJson($errors),
-			/* Постинга не было */
-			Yii::$app->request->isAjax => $this->renderAjax('modal/edit', compact('model')),
-			default => $this->render('edit', compact('model')),
-		};
+		return Yii::$app->request->isAjax
+			?$this->renderAjax('modal/edit', compact('model'))
+			:$this->render('edit', compact('model'));
 	}
 
 	/**
@@ -239,22 +249,20 @@ class DefaultController extends Controller {
 	 */
 	public function actionCreate() {
 		$model = $this->model;
-		if (static::isAjaxValidationRequest()) {
-			return $this->asJson($model->validateModelFromPost());
+
+		if ($model->load(Yii::$app->request->post())) {
+			if (!$model->save()) {
+				Yii::$app->session->setFlash('error', EditableFieldAction::Errors2String($model->getErrors(), '<br>'));
+				return $this->redirect(['create']);
+			} else {
+				Yii::$app->session->setFlash('success');
+				return $this->redirect(['edit', 'id' => $model->id]);
+			}
 		}
 
-		$errors = [];
-		$posting = $model->createModelFromPost($errors);/* switch тут нельзя использовать из-за его нестрогости */
-
-		return match (true) {
-			/* Модель была успешно прогружена */
-			true === $posting => $this->redirect('index'),
-			/* Пришёл постинг, но есть ошибки */
-			(false === $posting) && Yii::$app->request->isAjax => $this->asJson($errors),
-			/* Постинга не было */
-			Yii::$app->request->isAjax => $this->renderAjax('modal/create', compact('model')),
-			default => $this->render('create', compact('model')),
-		};
+		return Yii::$app->request->isAjax
+			?$this->renderAjax('modal/create', compact('model'))
+			:$this->render('create', compact('model'));
 	}
 
 	/**
@@ -303,17 +311,27 @@ class DefaultController extends Controller {
 			} else {
 				$textFields = "{$tableName}.{$column}";
 			}
-			$data = $this->model::find()
+			$query = $this->model::find()
 				->select(["{$tableName}.{$this->primaryColumnName}", "{$textFields} as text"])
 				->where(['like', "{$tableName}.{$column}", "%$term%", false])
 				->active()
-				->distinct()
-				->scope()
-				->asArray()
-				->all();
+				->distinct();
+
+			$query = $this->addAdditionalAjaxConditions($query);
+			$data = $query->asArray()->all();
+
 			$out['results'] = array_values($data);
 		}
 		return $out;
+	}
+
+	/**
+	 * Метод для дополнительных условий поиска аяксом
+	 * @param QueryInterface $query
+	 * @return ActiveQuery|QueryInterface
+	 */
+	protected function addAdditionalAjaxConditions(QueryInterface $query) {
+		return $query;
 	}
 
 	/**
@@ -321,7 +339,6 @@ class DefaultController extends Controller {
 	 * @throws InvalidConfigException
 	 * @throws ReflectionException
 	 * @throws UnknownClassException
-	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function actionIndex() {
 		$params = Yii::$app->request->queryParams;
@@ -369,6 +386,6 @@ class DefaultController extends Controller {
 	 * @throws NotFoundHttpException
 	 */
 	protected function getModelByIdOrFail(int $id) {
-		return $this->model::findOne($id) ?: throw new NotFoundHttpException();
+		return $this->model::findOne($id)?:throw new NotFoundHttpException();
 	}
 }
