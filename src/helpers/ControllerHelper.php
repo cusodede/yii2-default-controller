@@ -53,6 +53,7 @@ class ControllerHelper {
 	 * Текущий запрос - ajax-валидация формы?
 	 * Метод делается публичной статикой, он нужен не только в наследниках
 	 * @return bool
+	 * todo: после апгрейда компонентов взять аналогичный метод из компонентного хелпера
 	 */
 	public static function isAjaxValidationRequest():bool {
 		return null !== Yii::$app->request->post('ajax');
