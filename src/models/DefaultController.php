@@ -151,7 +151,7 @@ class DefaultController extends Controller {
 	 * @throws InvalidConfigException(
 	 */
 	public function getSearchModel():ActiveRecordInterface {
-		if (null !== $this->modelSearchClass) {
+		if (null === $this->modelSearchClass) {
 			throw new InvalidConfigException('Не установлено свойство $modelSearchClass');
 		}
 		if (!method_exists($this->modelSearchClass, 'search')) {
