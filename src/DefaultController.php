@@ -206,9 +206,8 @@ class DefaultController extends Controller {
 	 * @throws Throwable
 	 */
 	public function actionView(int $id):string {
-		if (null === $model = $this->model::findOne($id)) {
-			throw new NotFoundHttpException();
-		}
+		$model = $this->getModelByIdOrFail($id);
+
 		return Yii::$app->request->isAjax
 			?$this->renderAjax('modal/view', compact('model'))
 			:$this->render('view', compact('model'));
