@@ -3,12 +3,12 @@ declare(strict_types = 1);
 
 namespace cusodede\web\default_controller\models;
 
+use cusodede\web\default_controller\helpers\ControllerHelper as ComponentControllerHelper;
 use cusodede\web\default_controller\helpers\ErrorHelper;
 use cusodede\web\default_controller\models\actions\EditableFieldAction;
 use pozitronik\helpers\BootstrapHelper;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
-use pozitronik\traits\traits\ActiveRecordTrait;
 use pozitronik\traits\traits\ControllerTrait;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -19,7 +19,6 @@ use yii\base\InvalidCallException;
 use yii\base\InvalidConfigException;
 use yii\base\UnknownClassException;
 use yii\db\ActiveQueryInterface;
-use yii\db\ActiveRecord;
 use yii\db\ActiveRecordInterface;
 use yii\db\QueryInterface;
 use yii\filters\AjaxFilter;
@@ -190,8 +189,7 @@ class DefaultController extends Controller {
 			/** @var self $model */
 			if ($file->isFile()
 				&& ('php' === $file->getExtension())
-				&& (null !== $model = ControllerHelper::LoadControllerClassFromFile($file->getRealPath(), null,
-						[self::class]))
+				&& (null !== $model = ControllerHelper::LoadControllerClassFromFile($file->getRealPath(), null, [self::class]))
 				&& $model->enablePrototypeMenu) {
 				$items[] = [
 					'label' => $model->id,
@@ -204,12 +202,52 @@ class DefaultController extends Controller {
 	}
 
 	/**
-	 * Текущий запрос - ajax-валидация формы?
-	 * Метод делается публичной статикой, он нужен не только в наследниках
-	 * @return bool
+	 * @return string|Response
+	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws UnknownClassException
+	 * @noinspection PhpUndefinedMethodInspection Существование метода проверяется при инициализации поисковой модели
 	 */
-	public static function isAjaxValidationRequest():bool {
-		return null !== Yii::$app->request->post('ajax');
+	public function actionIndex() {
+		$params = Yii::$app->request->queryParams;
+		$searchModel = $this->getSearchModel();
+
+		$viewParams = [
+			'searchModel' => $searchModel,
+			'dataProvider' => $searchModel->search($params),
+			'controller' => $this,
+			'modelName' => $this->model->formName(),
+			'model' => $this->model,
+		];
+
+		if (Yii::$app->request->isAjax) {
+			return $this->viewExists(static::ViewPath().'modal/index') /*если модальной вьюхи для индекса не найдено - редирект*/
+				?$this->renderAjax('modal/index', $viewParams)
+				:$this->redirect(static::to('index'));/*параметры неважны - редирект произойдёт в modalHelper.js*/
+		}
+
+		return $this->render('index', $viewParams);
+	}
+
+	/**
+	 * @return string|Response
+	 * @throws Throwable
+	 */
+	public function actionCreate() {
+		$model = $this->model;
+
+		if ($model->load(Yii::$app->request->post())) {
+			if (!$model->save()) {
+				Yii::$app->session->setFlash('error', ErrorHelper::Errors2String($model->getErrors(), '<br>'));
+				return $this->redirect(['create']);
+			}
+			Yii::$app->session->setFlash('success');
+			return $this->redirect(['edit', ComponentControllerHelper::getModelPKName($model) => ComponentControllerHelper::getModelPKValue($model)]);
+		}
+
+		return Yii::$app->request->isAjax
+			?$this->renderAjax('modal/create', compact('model'))
+			:$this->render('create', compact('model'));
 	}
 
 	/**
@@ -218,21 +256,11 @@ class DefaultController extends Controller {
 	 * @throws Throwable
 	 */
 	public function actionView(int $id):string {
-		$model = $this->getModelByIdOrFail($id);
+		$model = $this->getModelByPKOrFail($id);
 
 		return Yii::$app->request->isAjax
 			?$this->renderAjax('modal/view', compact('model'))
 			:$this->render('view', compact('model'));
-	}
-
-	/**
-	 * actionEdit <==> actionUpdate
-	 * @param int $id
-	 * @return string
-	 * @throws Throwable
-	 */
-	public function actionUpdate(int $id):string {
-		return $this->actionEdit($id);
 	}
 
 	/**
@@ -258,24 +286,13 @@ class DefaultController extends Controller {
 	}
 
 	/**
-	 * @return string|Response
+	 * actionEdit <==> actionUpdate
+	 * @param int $id
+	 * @return string
 	 * @throws Throwable
 	 */
-	public function actionCreate() {
-		$model = $this->model;
-
-		if ($model->load(Yii::$app->request->post())) {
-			if (!$model->save()) {
-				Yii::$app->session->setFlash('error',ErrorHelper::Errors2String($model->getErrors(), '<br>'));
-				return $this->redirect(['create']);
-			}
-			Yii::$app->session->setFlash('success');
-			return $this->redirect(['edit', 'id' => $model->id]);
-		}
-
-		return Yii::$app->request->isAjax
-			?$this->renderAjax('modal/create', compact('model'))
-			:$this->render('create', compact('model'));
+	public function actionUpdate(int $id):string {
+		return $this->actionEdit($id);
 	}
 
 	/**
@@ -284,10 +301,16 @@ class DefaultController extends Controller {
 	 * @throws Throwable
 	 */
 	public function actionDelete(int $id):Response {
-		$model = $this->getModelByIdOrFail($id);
+		$model = $this->getModelByPKOrFail($id);
 
-		/** @var ActiveRecordTrait $model */
-		$model->safeDelete();
+		if ($model->hasAttribute('deleted')) {
+			/** @noinspection PhpUndefinedFieldInspection */
+			$model->setAttribute('deleted', !$this->deleted);
+			$model->save();
+			$model->afterDelete();
+		} else {
+			$model->delete();
+		}
 		return $this->redirect('index');
 	}
 
@@ -325,8 +348,12 @@ class DefaultController extends Controller {
 			$query = $this->model::find()
 				->select(["{$tableName}.{$this->primaryColumnName}", "{$textFields} as text"])
 				->where(['like', "{$tableName}.{$column}", "%$term%", false])
-				->active()
 				->distinct();
+
+			if ($this->hasMethod($query, 'active')) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection*/
+				$query->active();
+			}
 
 			$query = $this->addAdditionalAjaxConditions($query);
 			$data = $query->asArray()->all();
@@ -343,34 +370,6 @@ class DefaultController extends Controller {
 	 */
 	protected function addAdditionalAjaxConditions(QueryInterface $query):ActiveQueryInterface {
 		return $query;
-	}
-
-	/**
-	 * @return string|Response
-	 * @throws InvalidConfigException
-	 * @throws ReflectionException
-	 * @throws UnknownClassException
-	 * @noinspection PhpUndefinedMethodInspection Существование метода проверяется при инициализации поисковой модели
-	 */
-	public function actionIndex() {
-		$params = Yii::$app->request->queryParams;
-		$searchModel = $this->getSearchModel();
-
-		$viewParams = [
-			'searchModel' => $searchModel,
-			'dataProvider' => $searchModel->search($params),
-			'controller' => $this,
-			'modelName' => $this->model->formName(),
-			'model' => $this->model,
-		];
-
-		if (Yii::$app->request->isAjax) {
-			return $this->viewExists($this->viewPath.'modal/index') /*если модальной вьюхи для индекса не найдено - редирект*/
-				?$this->renderAjax('modal/index', $viewParams)
-				:$this->redirect(static::to('index'));/*параметры неважны - редирект произойдёт в modalHelper.js*/
-		}
-
-		return $this->render('index', $viewParams);
 	}
 
 	/**
@@ -394,29 +393,12 @@ class DefaultController extends Controller {
 	}
 
 	/**
-	 * @param int $pk
-	 * @return mixed|ActiveRecord
+	 * @param mixed $pk
+	 * @return ActiveRecordInterface
 	 * @throws NotFoundHttpException
 	 */
-	protected function getModelByPKOrFail(int $pk) {
+	protected function getModelByPKOrFail(mixed $pk):ActiveRecordInterface {
 		return $this->model::findOne($pk)?:throw new NotFoundHttpException();
 	}
 
-	/**
-	 * Вернуть название ключевого атрибута модели
-	 * @param ActiveRecordInterface $model
-	 * @return string|null
-	 */
-	protected static function getModelPKName(ActiveRecordInterface $model):?string {
-		return $model::primaryKey()[0]??null;
-	}
-
-	/**
-	 * Вернуть значение ключевого атрибута модели
-	 * @param ActiveRecordInterface $model
-	 * @return mixed
-	 */
-	protected static function getModelPKValue(ActiveRecordInterface $model):mixed {
-		return $model->{static::getModelPKName($model)};
-	}
 }
