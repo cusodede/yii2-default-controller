@@ -254,10 +254,9 @@ class DefaultController extends Controller {
 			if (!$model->save()) {
 				Yii::$app->session->setFlash('error', EditableFieldAction::Errors2String($model->getErrors(), '<br>'));
 				return $this->redirect(['create']);
-			} else {
-				Yii::$app->session->setFlash('success');
-				return $this->redirect(['edit', 'id' => $model->id]);
 			}
+			Yii::$app->session->setFlash('success');
+			return $this->redirect(['edit', 'id' => $model->id]);
 		}
 
 		return Yii::$app->request->isAjax
@@ -271,9 +270,8 @@ class DefaultController extends Controller {
 	 * @throws Throwable
 	 */
 	public function actionDelete(int $id):Response {
-		if (null === $model = $this->model::findOne($id)) {
-			throw new NotFoundHttpException();
-		}
+		$model = $this->getModelByIdOrFail($id);
+
 		/** @var ActiveRecordTrait $model */
 		$model->safeDelete();
 		return $this->redirect('index');
