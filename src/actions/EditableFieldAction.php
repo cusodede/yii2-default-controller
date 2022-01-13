@@ -53,7 +53,6 @@ class EditableFieldAction extends Action {
 	}
 
 	/**
-	 * Не придумал ничего лучше, чем копирнуть это из хелпера
 	 * @param array $errors
 	 * @param array|string $separator
 	 * @return string
