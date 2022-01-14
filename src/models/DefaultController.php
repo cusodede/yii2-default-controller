@@ -295,10 +295,10 @@ class DefaultController extends Controller {
 	/**
 	 * actionEdit <==> actionUpdate
 	 * @param int $id
-	 * @return string
+	 * @return string|Response
 	 * @throws Throwable
 	 */
-	public function actionUpdate(int $id):string {
+	public function actionUpdate(int $id):string|Response {
 		return $this->actionEdit($id);
 	}
 
