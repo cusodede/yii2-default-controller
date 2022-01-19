@@ -12,8 +12,11 @@ use pozitronik\traits\traits\ControllerTrait;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionException;
+use ReflectionMethod;
 use Throwable;
 use Yii;
+use yii\base\Action;
+use yii\base\InlineAction;
 use yii\base\InvalidCallException;
 use yii\base\InvalidConfigException;
 use yii\base\UnknownClassException;
@@ -47,6 +50,14 @@ class DefaultController extends Controller {
 	protected string $primaryColumnName = 'id';
 
 	/**
+	 * @var string[]
+	 * При необходимости отключить дефолтные экшены, перечисляем их в массиве, например
+	 * ['actionView', 'actionEdit', 'actionUpdate'] => отключить actionView(), actionEdit(), actionUpdate()
+	 * @see CreateAction()
+	 */
+	protected array $disabledActions = [];
+
+	/**
 	 * Название контроллера
 	 */
 	protected const DEFAULT_TITLE = null;
@@ -76,6 +87,30 @@ class DefaultController extends Controller {
 	 * @var bool enablePrototypeMenu
 	 */
 	public bool $enablePrototypeMenu = true;
+
+	/**
+	 * @inheritDoc
+	 */
+	public function createAction($id):?Action {
+		if ('' === $id) $id = $this->defaultAction;
+
+		$actionMap = $this->actions();
+		if (isset($actionMap[$id])) {
+			return Yii::createObject($actionMap[$id], [$id, $this]);
+		}
+
+		if (preg_match('/^(?:[a-z0-9_]+-)*[a-z0-9_]+$/', $id)) {
+			$methodName = 'action'.str_replace(' ', '', ucwords(str_replace('-', ' ', $id)));
+			if (method_exists($this, $methodName) && !in_array($methodName, $this->disabledActions, true)) {
+				$method = new ReflectionMethod($this, $methodName);
+				if ($method->isPublic() && $method->getName() === $methodName) {
+					return new InlineAction($id, $this, $methodName);
+				}
+			}
+		}
+
+		return null;
+	}
 
 	/**
 	 * @return string
