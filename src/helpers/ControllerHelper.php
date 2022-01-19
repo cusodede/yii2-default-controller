@@ -9,11 +9,12 @@ use yii\base\Model;
 use yii\db\ActiveRecordInterface;
 use yii\db\Exception as DbException;
 use yii\widgets\ActiveForm;
+use pozitronik\helpers\ControllerHelper as VendorControllerHelper;
 
 /**
  * Вспомогательный хелпер
  */
-class ControllerHelper {
+class ControllerHelper extends VendorControllerHelper {
 
 	/**
 	 * Вывести человекочитаемый список ошибок
@@ -47,16 +48,6 @@ class ControllerHelper {
 	 */
 	public static function getModelPKValue(ActiveRecordInterface $model):mixed {
 		return $model->{static::getModelPKName($model)};
-	}
-
-	/**
-	 * Текущий запрос - ajax-валидация формы?
-	 * Метод делается публичной статикой, он нужен не только в наследниках
-	 * @return bool
-	 * todo: после апгрейда компонентов взять аналогичный метод из компонентного хелпера
-	 */
-	public static function isAjaxValidationRequest():bool {
-		return null !== Yii::$app->request->post('ajax');
 	}
 
 	/**

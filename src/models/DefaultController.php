@@ -269,7 +269,7 @@ class DefaultController extends Controller {
 	 */
 	public function actionCreate() {
 		$model = $this->model;
-		if (ControllerHelper::isAjaxValidationRequest()) {
+		if (ControllerHelper::IsAjaxValidationRequest()) {
 			return $this->asJson(ControllerHelper::validateModelFromPost($model));
 		}
 		$errors = [];
@@ -308,7 +308,7 @@ class DefaultController extends Controller {
 	public function actionEdit(int $id) {
 		$model = $this->getModelByPKOrFail($id);
 
-		if (ControllerHelper::isAjaxValidationRequest()) {
+		if (ControllerHelper::IsAjaxValidationRequest()) {
 			return $this->asJson(ControllerHelper::validateModelFromPost($model));
 		}
 		$errors = [];
@@ -330,10 +330,10 @@ class DefaultController extends Controller {
 	/**
 	 * actionEdit <==> actionUpdate
 	 * @param int $id
-	 * @return string
+	 * @return string|Response
 	 * @throws Throwable
 	 */
-	public function actionUpdate(int $id):string {
+	public function actionUpdate(int $id):string|Response {
 		return $this->actionEdit($id);
 	}
 
