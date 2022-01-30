@@ -133,12 +133,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-krajee-base.git",
-                "reference": "fd1d7a97add94a2e0974240d7ac70275ce454faf"
+                "reference": "c904bbaa4b32bb46664a6bff46a22adf512054e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-krajee-base/zipball/fd1d7a97add94a2e0974240d7ac70275ce454faf",
-                "reference": "fd1d7a97add94a2e0974240d7ac70275ce454faf",
+                "url": "https://api.github.com/repos/kartik-v/yii2-krajee-base/zipball/c904bbaa4b32bb46664a6bff46a22adf512054e3",
+                "reference": "c904bbaa4b32bb46664a6bff46a22adf512054e3",
                 "shasum": ""
             },
             "suggest": {
@@ -183,7 +183,7 @@
                 "issues": "https://github.com/kartik-v/yii2-krajee-base/issues",
                 "source": "https://github.com/kartik-v/yii2-krajee-base/tree/master"
             },
-            "time": "2022-01-11T07:11:10+00:00"
+            "time": "2022-01-24T15:07:45+00:00"
         },
         {
             "name": "kartik-v/yii2-sortable",
@@ -303,16 +303,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pozitronik/yii2-badgewidget.git",
-                "reference": "e46ac80d79d2303a36f8ad0d94ac677c3817e2ed"
+                "reference": "2c6521f00cb1cae1a10c88660695cf06aa1ed0f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pozitronik/yii2-badgewidget/zipball/e46ac80d79d2303a36f8ad0d94ac677c3817e2ed",
-                "reference": "e46ac80d79d2303a36f8ad0d94ac677c3817e2ed",
+                "url": "https://api.github.com/repos/pozitronik/yii2-badgewidget/zipball/2c6521f00cb1cae1a10c88660695cf06aa1ed0f0",
+                "reference": "2c6521f00cb1cae1a10c88660695cf06aa1ed0f0",
                 "shasum": ""
             },
             "require": {
-                "php": "~7.4|~8.0",
+                "php": ">=8.0",
                 "pozitronik/yii2-cachedwidget": "dev-master",
                 "pozitronik/yii2-helpers": "dev-master"
             },
@@ -345,9 +345,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pozitronik/yii2-badgewidget/issues",
-                "source": "https://github.com/pozitronik/yii2-badgewidget/tree/php7.4"
+                "source": "https://github.com/pozitronik/yii2-badgewidget/tree/master"
             },
-            "time": "2021-10-20T17:02:06+00:00"
+            "time": "2022-01-30T18:44:14+00:00"
         },
         {
             "name": "pozitronik/yii2-cachedwidget",
@@ -355,13 +355,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pozitronik/yii2-cachedwidget.git",
-                "reference": "4cde73d689682ea879a51a45dd3d2dcbba35d91f"
+                "reference": "070ab9577a315db97c1fa6cec49ea8355a84ceb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pozitronik/yii2-cachedwidget/zipball/4cde73d689682ea879a51a45dd3d2dcbba35d91f",
-                "reference": "4cde73d689682ea879a51a45dd3d2dcbba35d91f",
+                "url": "https://api.github.com/repos/pozitronik/yii2-cachedwidget/zipball/070ab9577a315db97c1fa6cec49ea8355a84ceb3",
+                "reference": "070ab9577a315db97c1fa6cec49ea8355a84ceb3",
                 "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
             },
             "require-dev": {
                 "yiisoft/yii2": "dev-master"
@@ -392,9 +395,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pozitronik/yii2-cachedwidget/issues",
-                "source": "https://github.com/pozitronik/yii2-cachedwidget/tree/php7.4"
+                "source": "https://github.com/pozitronik/yii2-cachedwidget/tree/dev"
             },
-            "time": "2021-05-11T08:26:14+00:00"
+            "time": "2022-01-12T09:28:44+00:00"
         },
         {
             "name": "pozitronik/yii2-grid-config",
@@ -402,23 +405,25 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pozitronik/yii2-grid-config.git",
-                "reference": "cd7beaa0baf026f58bf416b13a35d5e2b9ae7c7f"
+                "reference": "17a3f589fcc215e3bd7792a682614001e2158955"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pozitronik/yii2-grid-config/zipball/cd7beaa0baf026f58bf416b13a35d5e2b9ae7c7f",
-                "reference": "cd7beaa0baf026f58bf416b13a35d5e2b9ae7c7f",
+                "url": "https://api.github.com/repos/pozitronik/yii2-grid-config/zipball/17a3f589fcc215e3bd7792a682614001e2158955",
+                "reference": "17a3f589fcc215e3bd7792a682614001e2158955",
                 "shasum": ""
             },
             "require": {
                 "kartik-v/yii2-sortable": "dev-master",
                 "kartik-v/yii2-widget-switchinput": "dev-master",
-                "php": ">=7.4",
+                "php": ">=8.0",
                 "pozitronik/yii2-traits": "dev-master",
                 "pozitronik/yii2-users-options": "dev-master"
             },
             "require-dev": {
-                "yiisoft/yii2": "dev-master"
+                "yiisoft/yii2": "dev-master",
+                "yiisoft/yii2-bootstrap": "dev-master",
+                "yiisoft/yii2-bootstrap4": "~2.0.10"
             },
             "suggest": {
                 "yiisoft/yii2-bootstrap": "for yii2-grid-config extensions to work with Bootstrap 3.x version",
@@ -452,7 +457,7 @@
                 "issues": "https://github.com/pozitronik/yii2-grid-config/issues",
                 "source": "https://github.com/pozitronik/yii2-grid-config/tree/master"
             },
-            "time": "2021-11-20T13:58:51+00:00"
+            "time": "2022-01-30T18:47:05+00:00"
         },
         {
             "name": "pozitronik/yii2-helpers",
@@ -460,16 +465,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pozitronik/yii2-helpers.git",
-                "reference": "5ab5b705940cf49a7ac94848b188b30b55bae1fc"
+                "reference": "53c054139814e8f4c355c3e1fa1021989d79bbf0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pozitronik/yii2-helpers/zipball/5ab5b705940cf49a7ac94848b188b30b55bae1fc",
-                "reference": "5ab5b705940cf49a7ac94848b188b30b55bae1fc",
+                "url": "https://api.github.com/repos/pozitronik/yii2-helpers/zipball/53c054139814e8f4c355c3e1fa1021989d79bbf0",
+                "reference": "53c054139814e8f4c355c3e1fa1021989d79bbf0",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.4"
+                "php": ">=8.0"
             },
             "require-dev": {
                 "yiisoft/yii2": "dev-master"
@@ -499,9 +504,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pozitronik/yii2-helpers/issues",
-                "source": "https://github.com/pozitronik/yii2-helpers/tree/php7.4"
+                "source": "https://github.com/pozitronik/yii2-helpers/tree/dev"
             },
-            "time": "2021-12-17T11:58:43+00:00"
+            "time": "2022-01-13T15:59:03+00:00"
         },
         {
             "name": "pozitronik/yii2-traits",
@@ -509,16 +514,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pozitronik/yii2-traits.git",
-                "reference": "b1fcf77b5e001debc77f4595cd75ed837b327012"
+                "reference": "b8592f75d0b22530f512428698a4ab1c66124756"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pozitronik/yii2-traits/zipball/b1fcf77b5e001debc77f4595cd75ed837b327012",
-                "reference": "b1fcf77b5e001debc77f4595cd75ed837b327012",
+                "url": "https://api.github.com/repos/pozitronik/yii2-traits/zipball/b8592f75d0b22530f512428698a4ab1c66124756",
+                "reference": "b8592f75d0b22530f512428698a4ab1c66124756",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.4",
+                "php": ">=8.0",
                 "pozitronik/yii2-helpers": "dev-master"
             },
             "require-dev": {
@@ -548,9 +553,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pozitronik/yii2-traits/issues",
-                "source": "https://github.com/pozitronik/yii2-traits/tree/php7.4"
+                "source": "https://github.com/pozitronik/yii2-traits/tree/master"
             },
-            "time": "2021-12-07T11:51:02+00:00"
+            "time": "2022-01-30T18:42:34+00:00"
         },
         {
             "name": "pozitronik/yii2-users-options",
@@ -558,13 +563,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pozitronik/yii2-users-options.git",
-                "reference": "f6e4e9ae98c243e3c7ebfd7109bff12ffa4fbe9b"
+                "reference": "92b7c713ba38b3ee22c8dc3be7024cf5a119c34b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pozitronik/yii2-users-options/zipball/f6e4e9ae98c243e3c7ebfd7109bff12ffa4fbe9b",
-                "reference": "f6e4e9ae98c243e3c7ebfd7109bff12ffa4fbe9b",
+                "url": "https://api.github.com/repos/pozitronik/yii2-users-options/zipball/92b7c713ba38b3ee22c8dc3be7024cf5a119c34b",
+                "reference": "92b7c713ba38b3ee22c8dc3be7024cf5a119c34b",
                 "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
             },
             "require-dev": {
                 "yiisoft/yii2": "dev-master"
@@ -593,9 +601,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pozitronik/yii2-users-options/issues",
-                "source": "https://github.com/pozitronik/yii2-users-options/tree/php7.4"
+                "source": "https://github.com/pozitronik/yii2-users-options/tree/dev"
             },
-            "time": "2021-12-23T14:39:37+00:00"
+            "time": "2022-01-12T09:01:44+00:00"
         }
     ],
     "packages-dev": [
@@ -604,7 +612,7 @@
             "version": "v3.4.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:twbs/bootstrap.git",
+                "url": "https://github.com/twbs/bootstrap.git",
                 "reference": "68b0d231a13201eb14acd3dc84e51543d16e5f7e"
             },
             "dist": {
@@ -625,7 +633,7 @@
             "version": "3.3.11",
             "source": {
                 "type": "git",
-                "url": "git@github.com:RobinHerbots/Inputmask.git",
+                "url": "https://github.com/RobinHerbots/Inputmask.git",
                 "reference": "5e670ad62f50c738388d4dcec78d2888505ad77b"
             },
             "dist": {
@@ -829,12 +837,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "cba4096b51f5e588ee60cf7fbf3bf02a13ef0439"
+                "reference": "91748753a20dd02a227fc10777bb996a7ca527fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/cba4096b51f5e588ee60cf7fbf3bf02a13ef0439",
-                "reference": "cba4096b51f5e588ee60cf7fbf3bf02a13ef0439",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/91748753a20dd02a227fc10777bb996a7ca527fc",
+                "reference": "91748753a20dd02a227fc10777bb996a7ca527fc",
                 "shasum": ""
             },
             "require": {
@@ -876,7 +884,7 @@
                 "issues": "https://github.com/paragonie/random_compat/issues",
                 "source": "https://github.com/paragonie/random_compat"
             },
-            "time": "2021-10-04T08:39:19+00:00"
+            "time": "2022-01-17T05:50:28+00:00"
         },
         {
             "name": "yiisoft/yii2",
@@ -884,12 +892,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "637e6643009db02ffaeb891d022fe06cfe1211e3"
+                "reference": "6b4bf6035fe7a4ae62cbab80d6b6cdd7dabb18b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/637e6643009db02ffaeb891d022fe06cfe1211e3",
-                "reference": "637e6643009db02ffaeb891d022fe06cfe1211e3",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/6b4bf6035fe7a4ae62cbab80d6b6cdd7dabb18b1",
+                "reference": "6b4bf6035fe7a4ae62cbab80d6b6cdd7dabb18b1",
                 "shasum": ""
             },
             "require": {
@@ -999,7 +1007,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-08T09:32:19+00:00"
+            "time": "2022-01-27T18:47:37+00:00"
         },
         {
             "name": "yiisoft/yii2-bootstrap",
