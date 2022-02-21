@@ -6,6 +6,7 @@ namespace cusodede\web\default_controller\helpers;
 use Throwable;
 use Yii;
 use yii\base\Model;
+use yii\bootstrap4\Html;
 use yii\db\ActiveRecordInterface;
 use yii\db\Exception as DbException;
 use yii\widgets\ActiveForm;
@@ -95,7 +96,7 @@ class ControllerHelper extends VendorControllerHelper {
 			} else {
 				if (null === $AJAXErrorsFormat) $AJAXErrorsFormat = Yii::$app->request->isAjax;
 				$errors = $AJAXErrorsFormat
-					?ActiveForm::validate($model)
+					?static::errorsAjaxFormat($model)
 					:$model->errors;
 				$transaction->rollBack();
 			}
@@ -103,5 +104,18 @@ class ControllerHelper extends VendorControllerHelper {
 			return $result;
 		}
 		return null;
+	}
+
+	/**
+	 * Массив текущих ошибок модели в ajax-формате
+	 * @param Model|ActiveRecordInterface $model
+	 * @return array
+	 */
+	public static function errorsAjaxFormat(Model|ActiveRecordInterface $model):array {
+		$result = [];
+		foreach ($model->getErrors() as $attribute => $errors) {
+			$result[Html::getInputId($model, $attribute)] = $errors;
+		}
+		return $result;
 	}
 }
