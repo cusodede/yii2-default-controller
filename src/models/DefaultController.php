@@ -416,14 +416,8 @@ class DefaultController extends Controller {
 		if (null !== $term) {
 			$tableName = $this->model::tableName();
 			if ($concatFields) {
-				// добавляем название таблицы перед каждым полем
 				$concatFieldsArray = preg_filter('/^/', "{$tableName}.", explode(',', $concatFields));
-				// CONCAT возвращает пустое значение если хотя бы одно из полей NULL
-				$concatFieldsArray = array_map(static function($item) {
-					return 'COALESCE('.$item.", '')";
-				}, $concatFieldsArray);
-				// пихаем COALESCE в  CONCAT() функцию.
-				// Конечный формат: SELECT DISTINCT `table`.`id`, CONCAT(COALESCE(table.a, ''), ' ', COALESCE(table.b, ''), ' ',COALESCE(table.c, '')) AS `text`
+				$concatFieldsArray = array_map(static fn($item) => 'COALESCE('.$item.", '')", $concatFieldsArray);
 				$textFields = 'CONCAT('.implode(",' ',", $concatFieldsArray).')';
 			} else {
 				$textFields = "{$tableName}.{$column}";
