@@ -29,6 +29,7 @@ use yii\filters\AjaxFilter;
 use yii\filters\ContentNegotiator;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -51,7 +52,7 @@ class DefaultController extends Controller {
 	 * Конечно ключ может быть составным, но пока таких случаев не встречалось.
 	 * null - попытаемся получить из модели
 	 */
-	protected ?string $_primaryColumnName = null;
+	protected static ?string $_primaryKeyName = null;
 
 	/**
 	 * @var string|null $_afterCreateAction
@@ -108,8 +109,8 @@ class DefaultController extends Controller {
 	/**
 	 * @return string|null
 	 */
-	public function getPrimaryColumnName():?string {
-		return $this->_primaryColumnName ??= $this->model::pkName();
+	public function getPrimaryKeyName():?string {
+		return static::$_primaryKeyName ??= $this->model::pkName();
 	}
 
 	/**
@@ -118,7 +119,7 @@ class DefaultController extends Controller {
 	 * @throws Exception
 	 */
 	protected static function getAfterCreateAction():string {
-		return self::$_afterCreateAction ??= ArrayHelper::getValue(Yii::$app->components, 'defaultController.afterCreateAction', 'index');
+		return static::$_afterCreateAction ??= ArrayHelper::getValue(Yii::$app->components, 'defaultController.afterCreateAction', 'index');
 	}
 
 	/**
@@ -127,7 +128,7 @@ class DefaultController extends Controller {
 	 * @throws Exception
 	 */
 	protected static function getAfterUpdateAction():string {
-		return self::$_afterUpdateAction ??= ArrayHelper::getValue(Yii::$app->components, 'defaultController.afterUpdateAction', 'index');
+		return static::$_afterUpdateAction ??= ArrayHelper::getValue(Yii::$app->components, 'defaultController.afterUpdateAction', 'index');
 	}
 
 	/**
@@ -316,7 +317,7 @@ class DefaultController extends Controller {
 		$errors = [];
 		$posting = ControllerHelper::createModelFromPost($model, $errors);/* switch тут нельзя использовать из-за его нестрогости */
 		if (true === $posting) {/* Модель была успешно прогружена */
-			return $this->redirect(Url::toRoute([static::$_afterCreateAction, $this->_primaryColumnName => $model->{$this->_primaryColumnName}]));
+			return $this->redirect(Url::toRoute([static::$_afterCreateAction, $this->getPrimaryKeyName() => $model->{$this->getPrimaryKeyName()}]));
 		}
 		/* Пришёл постинг, но есть ошибки */
 		if ((false === $posting) && Yii::$app->request->isAjax) {
@@ -329,12 +330,11 @@ class DefaultController extends Controller {
 	}
 
 	/**
-	 * @param int $id
 	 * @return string
 	 * @throws Throwable
 	 */
-	public function actionView(int $id):string {
-		$model = $this->getModelByPKOrFail($id);
+	public function actionView():string {
+		$model = $this->getModelByPKOrFail($this->checkPrimaryKey());
 
 		return Yii::$app->request->isAjax
 			?$this->renderAjax('modal/view', compact('model'))
@@ -342,12 +342,11 @@ class DefaultController extends Controller {
 	}
 
 	/**
-	 * @param int $id
 	 * @return string|Response
 	 * @throws Throwable
 	 */
-	public function actionEdit(int $id) {
-		$model = $this->getModelByPKOrFail($id);
+	public function actionEdit() {
+		$model = $this->getModelByPKOrFail($this->checkPrimaryKey());
 
 		if (ControllerHelper::IsAjaxValidationRequest()) {
 			return $this->asJson(ControllerHelper::validateModelFromPost($model));
@@ -356,7 +355,7 @@ class DefaultController extends Controller {
 		$posting = ControllerHelper::createModelFromPost($model, $errors);
 
 		if (true === $posting) {/* Модель была успешно прогружена */
-			return $this->redirect(Url::toRoute([static::$_afterUpdateAction, $this->_primaryColumnName => $model->{$this->_primaryColumnName}]));
+			return $this->redirect(Url::toRoute([static::$_afterUpdateAction, $this->getPrimaryKeyName() => $model->{$this->getPrimaryKeyName()}]));
 		}
 		/* Пришёл постинг, но есть ошибки */
 		if ((false === $posting) && Yii::$app->request->isAjax) {
@@ -370,21 +369,19 @@ class DefaultController extends Controller {
 
 	/**
 	 * actionEdit <==> actionUpdate
-	 * @param int $id
 	 * @return string|Response
 	 * @throws Throwable
 	 */
-	public function actionUpdate(int $id):string|Response {
-		return $this->actionEdit($id);
+	public function actionUpdate():string|Response {
+		return $this->actionEdit();
 	}
 
 	/**
-	 * @param int $id
 	 * @return Response
 	 * @throws Throwable
 	 */
-	public function actionDelete(int $id):Response {
-		$model = $this->getModelByPKOrFail($id);
+	public function actionDelete():Response {
+		$model = $this->getModelByPKOrFail($this->checkPrimaryKey());
 
 		if ($model->hasAttribute('deleted')) {
 			/** @noinspection PhpUndefinedFieldInspection */
@@ -423,7 +420,7 @@ class DefaultController extends Controller {
 				$textFields = "{$tableName}.{$column}";
 			}
 			$query = $this->model::find()
-				->select(["{$tableName}.{$this->_primaryColumnName}", "{$textFields} as text"])
+				->select(["{$tableName}.{$this->getPrimaryKeyName()}", "{$textFields} as text"])
 				->where(['like', "{$tableName}.{$column}", "%$term%", false])
 				->distinct();
 
@@ -475,6 +472,19 @@ class DefaultController extends Controller {
 	 */
 	protected function getModelByPKOrFail(mixed $pk):ActiveRecordInterface {
 		return $this->model::findOne($pk)?:throw new NotFoundHttpException();
+	}
+
+	/**
+	 * @return mixed
+	 * @throws BadRequestHttpException
+	 */
+	protected function checkPrimaryKey():mixed {
+		if (null === $pkValue = ArrayHelper::getValue($this->request->queryParams, $this->getPrimaryKeyName())) {
+			throw new BadRequestHttpException(
+				Yii::t('yii', 'Missing required parameters: {params}', ['params' => $this->getPrimaryKeyName()])
+			);
+		}
+		return $pkValue;
 	}
 
 }
