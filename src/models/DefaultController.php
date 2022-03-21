@@ -317,7 +317,7 @@ class DefaultController extends Controller {
 		$errors = [];
 		$posting = ControllerHelper::createModelFromPost($model, $errors);/* switch тут нельзя использовать из-за его нестрогости */
 		if (true === $posting) {/* Модель была успешно прогружена */
-			return $this->redirect(Url::toRoute([static::$_afterCreateAction, $this->getPrimaryKeyName() => $model->{$this->getPrimaryKeyName()}]));
+			return $this->redirect(Url::toRoute([static::getAfterCreateAction(), $this->getPrimaryKeyName() => ArrayHelper::getValue($model, $this->getPrimaryKeyName())]));
 		}
 		/* Пришёл постинг, но есть ошибки */
 		if ((false === $posting) && Yii::$app->request->isAjax) {
@@ -346,7 +346,7 @@ class DefaultController extends Controller {
 	 * @throws Throwable
 	 */
 	public function actionEdit() {
-		$model = $this->getModelByPKOrFail($this->checkPrimaryKey());
+		$model = $this->getModelByPKOrFail($pk = $this->checkPrimaryKey());
 
 		if (ControllerHelper::IsAjaxValidationRequest()) {
 			return $this->asJson(ControllerHelper::validateModelFromPost($model));
@@ -355,7 +355,7 @@ class DefaultController extends Controller {
 		$posting = ControllerHelper::createModelFromPost($model, $errors);
 
 		if (true === $posting) {/* Модель была успешно прогружена */
-			return $this->redirect(Url::toRoute([static::$_afterUpdateAction, $this->getPrimaryKeyName() => $model->{$this->getPrimaryKeyName()}]));
+			return $this->redirect(Url::toRoute([static::getAfterUpdateAction(), $this->getPrimaryKeyName() => $pk]));
 		}
 		/* Пришёл постинг, но есть ошибки */
 		if ((false === $posting) && Yii::$app->request->isAjax) {
