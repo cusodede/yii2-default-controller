@@ -38,7 +38,7 @@ $id = "{$modelName}-index-grid";
 		],
 		'replaceTags' => [
 			'{totalCount}' => ($dataProvider->totalCount > 0)?Utils::pluralForm($dataProvider->totalCount, ['запись', 'записи', 'записей']):"Нет записей",
-			'{newRecord}' => Html::a('Новая запись', $controller::to('create'), ['class' => 'btn btn-success']),
+			'{newRecord}' => Html::a('Новая запись', $controller->link('create'), ['class' => 'btn btn-success']),
 		],
 		'panelBeforeTemplate' => '{newRecord}{toolbarContainer}<div class="clearfix"></div>',
 		'summary' => null,

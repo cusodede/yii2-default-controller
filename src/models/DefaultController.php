@@ -136,8 +136,7 @@ class DefaultController extends Controller {
 			if ($this->defaultAction === $action->id) {
 				$this->view->params['breadcrumbs'][] = self::Title();
 			} else {
-				$actionForUrl = Yii::$app->id !== $this->module->id?'/'.$this->module->id.$this::to($this->defaultAction):$this::to($this->defaultAction);
-				$this->view->params['breadcrumbs'][] = ['label' => self::Title(), 'url' => $actionForUrl];
+				$this->view->params['breadcrumbs'][] = ['label' => self::Title(), 'url' => $this->link($this->defaultAction)];
 				$this->view->params['breadcrumbs'][] = ['label' => $this->view->title];
 			}
 
@@ -227,7 +226,7 @@ class DefaultController extends Controller {
 				&& $model->enablePrototypeMenu) {
 				$items[] = [
 					'label' => $model->id,
-					'url' => [$model::to($model->defaultAction)],
+					'url' => [$model->link($model->defaultAction)],
 					'model' => $model,
 				];
 			}
@@ -257,7 +256,7 @@ class DefaultController extends Controller {
 		if (Yii::$app->request->isAjax) {
 			return $this->viewExists(static::ViewPath().'modal/index') /*если модальной вьюхи для индекса не найдено - редирект*/
 				?$this->renderAjax('modal/index', $viewParams)
-				:$this->redirect(static::to('index'));/*параметры неважны - редирект произойдёт в modalHelper.js*/
+				:$this->redirect($this->link('index'));/*параметры неважны - редирект произойдёт в modalHelper.js*/
 		}
 
 		return $this->render('index', $viewParams);
