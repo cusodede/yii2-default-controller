@@ -9,6 +9,7 @@ use Exception;
 use pozitronik\helpers\BootstrapHelper;
 use pozitronik\helpers\ControllerHelper as VendorControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
+use pozitronik\traits\traits\ActiveRecordTrait;
 use pozitronik\traits\traits\ControllerTrait;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -40,16 +41,30 @@ use yii\web\Response;
  * @property bool $enablePrototypeMenu Включать ли контроллер в меню списка прототипов
  *
  * @property-read ActiveRecordInterface $searchModel
- * @property-read ActiveRecordInterface $model
+ * @property-read ActiveRecordInterface|ActiveRecordTrait $model
  */
 class DefaultController extends Controller {
 	use ControllerTrait;
 
 	/**
-	 * @var string название поля с первичным ключом.
+	 * @var null|string название поля с первичным ключом.
 	 * Конечно ключ может быть составным, но пока таких случаев не встречалось.
+	 * null - попытаемся получить из модели
 	 */
-	protected string $primaryColumnName = 'id';
+	protected ?string $_primaryColumnName = null;
+
+	/**
+	 * @var string|null $_afterCreateAction
+	 * Экшен, на который будет происходить редирект после создания модели.
+	 * Если null - взять глобальную настройку.
+	 */
+	protected static ?string $_afterCreateAction = null;
+	/**
+	 * @var string|null
+	 * Экшен, на который будет происходить редирект после создания модели.
+	 * Если null - взять глобальную настройку.
+	 */
+	protected static ?string $_afterUpdateAction = null;
 
 	/**
 	 * @var string[]
@@ -91,17 +106,11 @@ class DefaultController extends Controller {
 	public bool $enablePrototypeMenu = true;
 
 	/**
-	 * @var string|null $_afterCreateAction
-	 * Экшен, на который будет происходить редирект после создания модели.
-	 * Если null - взять глобальную настройку.
+	 * @return string|null
 	 */
-	protected static ?string $_afterCreateAction = null;
-	/**
-	 * @var string|null
-	 * Экшен, на который будет происходить редирект после создания модели.
-	 * Если null - взять глобальную настройку.
-	 */
-	protected static ?string $_afterUpdateAction = null;
+	public function getPrimaryColumnName():?string {
+		return $this->_primaryColumnName ??= $this->model::pkName();
+	}
 
 	/**
 	 * Возвращает настройку экшена, на который будет переходить редирект после создания модели.
@@ -307,7 +316,7 @@ class DefaultController extends Controller {
 		$errors = [];
 		$posting = ControllerHelper::createModelFromPost($model, $errors);/* switch тут нельзя использовать из-за его нестрогости */
 		if (true === $posting) {/* Модель была успешно прогружена */
-			return $this->redirect(Url::toRoute([static::$_afterCreateAction, $this->model->pkNameValue()]));
+			return $this->redirect(Url::toRoute([static::$_afterCreateAction, $this->_primaryColumnName => $model->{$this->_primaryColumnName}]));
 		}
 		/* Пришёл постинг, но есть ошибки */
 		if ((false === $posting) && Yii::$app->request->isAjax) {
@@ -347,7 +356,7 @@ class DefaultController extends Controller {
 		$posting = ControllerHelper::createModelFromPost($model, $errors);
 
 		if (true === $posting) {/* Модель была успешно прогружена */
-			return $this->redirect(Url::toRoute([static::$_afterUpdateAction, $this->model->pkNameValue()]));
+			return $this->redirect(Url::toRoute([static::$_afterUpdateAction, $this->_primaryColumnName => $model->{$this->_primaryColumnName}]));
 		}
 		/* Пришёл постинг, но есть ошибки */
 		if ((false === $posting) && Yii::$app->request->isAjax) {
@@ -420,12 +429,11 @@ class DefaultController extends Controller {
 				$textFields = "{$tableName}.{$column}";
 			}
 			$query = $this->model::find()
-				->select(["{$tableName}.{$this->primaryColumnName}", "{$textFields} as text"])
+				->select(["{$tableName}.{$this->_primaryColumnName}", "{$textFields} as text"])
 				->where(['like', "{$tableName}.{$column}", "%$term%", false])
 				->distinct();
 
 			if ($this->hasMethod($query, 'active')) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$query->active();
 			}
 
