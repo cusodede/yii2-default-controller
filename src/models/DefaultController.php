@@ -5,6 +5,7 @@ namespace cusodede\web\default_controller\models;
 
 use cusodede\web\default_controller\helpers\ControllerHelper;
 use cusodede\web\default_controller\models\actions\EditableFieldAction;
+use Exception;
 use pozitronik\helpers\BootstrapHelper;
 use pozitronik\helpers\ControllerHelper as VendorControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
@@ -26,6 +27,7 @@ use yii\db\QueryInterface;
 use yii\filters\AjaxFilter;
 use yii\filters\ContentNegotiator;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -84,9 +86,40 @@ class DefaultController extends Controller {
 	public ?string $modelSearchClass = null;
 
 	/**
-	 * @var bool enablePrototypeMenu
+	 * @var bool $enablePrototypeMenu
 	 */
 	public bool $enablePrototypeMenu = true;
+
+	/**
+	 * @var string|null $_afterCreateAction
+	 * Экшен, на который будет происходить редирект после создания модели.
+	 * Если null - взять глобальную настройку.
+	 */
+	protected static ?string $_afterCreateAction = null;
+	/**
+	 * @var string|null
+	 * Экшен, на который будет происходить редирект после создания модели.
+	 * Если null - взять глобальную настройку.
+	 */
+	protected static ?string $_afterUpdateAction = null;
+
+	/**
+	 * Возвращает настройку экшена, на который будет переходить редирект после создания модели.
+	 * @return string
+	 * @throws Exception
+	 */
+	protected static function getAfterCreateAction():string {
+		return self::$_afterCreateAction ??= ArrayHelper::getValue(Yii::$app->components, 'defaultController.afterCreateAction', 'index');
+	}
+
+	/**
+	 * Возвращает настройку экшена, на который будет переходить редирект после изменения модели.
+	 * @return string
+	 * @throws Exception
+	 */
+	protected static function getAfterUpdateAction():string {
+		return self::$_afterUpdateAction ??= ArrayHelper::getValue(Yii::$app->components, 'defaultController.afterUpdateAction', 'index');
+	}
 
 	/**
 	 * @inheritDoc
@@ -274,7 +307,7 @@ class DefaultController extends Controller {
 		$errors = [];
 		$posting = ControllerHelper::createModelFromPost($model, $errors);/* switch тут нельзя использовать из-за его нестрогости */
 		if (true === $posting) {/* Модель была успешно прогружена */
-			return $this->redirect('index');
+			return $this->redirect(Url::toRoute([static::$_afterCreateAction, $this->model->pkNameValue()]));
 		}
 		/* Пришёл постинг, но есть ошибки */
 		if ((false === $posting) && Yii::$app->request->isAjax) {
@@ -314,7 +347,7 @@ class DefaultController extends Controller {
 		$posting = ControllerHelper::createModelFromPost($model, $errors);
 
 		if (true === $posting) {/* Модель была успешно прогружена */
-			return $this->redirect('index');
+			return $this->redirect(Url::toRoute([static::$_afterUpdateAction, $this->model->pkNameValue()]));
 		}
 		/* Пришёл постинг, но есть ошибки */
 		if ((false === $posting) && Yii::$app->request->isAjax) {
