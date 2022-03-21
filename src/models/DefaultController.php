@@ -318,7 +318,7 @@ class DefaultController extends Controller {
 		$posting = ControllerHelper::createModelFromPost($model, $errors);/* switch тут нельзя использовать из-за его нестрогости */
 		if (true === $posting) {/* Модель была успешно прогружена */
 			return ('index' === $redirectAction = static::getAfterCreateAction())
-				?$this->redirect($redirectAction)/*При редиректе на index get-параметры стоит спрятать*/
+				?$this->redirect(Url::toRoute($redirectAction))/*При редиректе на index get-параметры стоит спрятать*/
 				:$this->redirect(Url::toRoute([$redirectAction, $this->getPrimaryKeyName() => ArrayHelper::getValue($model, $this->getPrimaryKeyName())]));
 		}
 		/* Пришёл постинг, но есть ошибки */
@@ -358,7 +358,7 @@ class DefaultController extends Controller {
 
 		if (true === $posting) {/* Модель была успешно прогружена */
 			return ('index' === $redirectAction = static::getAfterCreateAction())
-				?$this->redirect($redirectAction)/*При редиректе на index get-параметры стоит спрятать*/
+				?$this->redirect(Url::toRoute($redirectAction))/*При редиректе на index get-параметры стоит спрятать*/
 				:$this->redirect(Url::toRoute([$redirectAction, $this->getPrimaryKeyName() => $pk]));
 		}
 		/* Пришёл постинг, но есть ошибки */
