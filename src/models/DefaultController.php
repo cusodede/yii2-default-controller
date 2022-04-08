@@ -174,7 +174,7 @@ class DefaultController extends Controller {
 	 * {@inheritdoc}
 	 */
 	public function beforeAction($action):bool {
-		$this->view->title = $this->view->title??ArrayHelper::getValue(static::ACTION_TITLES, $action->id, self::Title());
+		$this->view->title = $this->view->title??ArrayHelper::getValue(static::ACTION_TITLES, $action->id, static::Title());
 		if (!isset($this->view->params['breadcrumbs'])) {
 			if ($this->defaultAction === $action->id) {
 				$this->view->params['breadcrumbs'][] = self::Title();
