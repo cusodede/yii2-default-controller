@@ -177,9 +177,9 @@ class DefaultController extends Controller {
 		$this->view->title = $this->view->title??ArrayHelper::getValue(static::ACTION_TITLES, $action->id, static::Title());
 		if (!isset($this->view->params['breadcrumbs'])) {
 			if ($this->defaultAction === $action->id) {
-				$this->view->params['breadcrumbs'][] = self::Title();
+				$this->view->params['breadcrumbs'][] = static::Title();
 			} else {
-				$this->view->params['breadcrumbs'][] = ['label' => self::Title(), 'url' => $this->link($this->defaultAction)];
+				$this->view->params['breadcrumbs'][] = ['label' => static::Title(), 'url' => $this->link($this->defaultAction)];
 				$this->view->params['breadcrumbs'][] = ['label' => $this->view->title];
 			}
 
