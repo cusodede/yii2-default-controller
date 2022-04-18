@@ -389,7 +389,7 @@ class DefaultController extends Controller {
 
 		if ($model->hasAttribute('deleted')) {
 			/** @noinspection PhpUndefinedFieldInspection */
-			$model->setAttribute('deleted', !$this->deleted);
+			$model->setAttribute('deleted', !$model->deleted);
 			$model->save();
 			$model->afterDelete();
 		} else {
