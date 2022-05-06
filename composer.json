@@ -21,8 +21,8 @@
 	"minimum-stability": "dev",
 	"require": {
 		"php": ">=8.0",
-		"pozitronik/yii2-traits": "dev-master",
-		"pozitronik/yii2-badgewidget": "dev-master",
+		"pozitronik/yii2-traits": "^1.0.0",
+		"pozitronik/yii2-badgewidget": "^1.0.0",
 		"pozitronik/yii2-grid-config": "^1.0.0",
 		"kartik-v/yii2-grid": "dev-master"
 	},
