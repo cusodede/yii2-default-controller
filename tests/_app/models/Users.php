@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\models;
 
 use pozitronik\helpers\Utils;
+use pozitronik\traits\traits\ActiveRecordTrait;
 use Yii;
 use yii\base\Event;
 use yii\behaviors\AttributeBehavior;
@@ -21,6 +22,7 @@ use yii\web\IdentityInterface;
  * @property-read string $authKey @see [[yii\web\IdentityInterface::getAuthKey()]]
  */
 class Users extends ActiveRecord implements IdentityInterface {
+	use ActiveRecordTrait;
 
 	/**
 	 * @inheritDoc

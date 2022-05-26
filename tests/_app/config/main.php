@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 
 use app\models\Users;
+use yii\caching\DummyCache;
 use yii\log\FileTarget;
 use yii\web\AssetManager;
 use yii\web\ErrorHandler;
@@ -28,7 +29,7 @@ $config = [
 			'cookieValidationKey' => 'sosijopu',
 		],
 		'cache' => [
-			'class' => $_ENV['CACHE_CLASS'],
+			'class' => DummyCache::class,
 		],
 		'user' => [
 			'identityClass' => Users::class,
