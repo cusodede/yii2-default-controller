@@ -25,7 +25,7 @@ jobs:
       postgres:
         image: postgres:13.4
         env:
-          POSTGRES_DB: yii2-dynamic-attributes
+          POSTGRES_DB: yii2-default-controller
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         options: >-
