@@ -174,7 +174,7 @@ class DefaultController extends Controller {
 	 * {@inheritdoc}
 	 */
 	public function beforeAction($action):bool {
-		$this->view->title = $this->view->title??ArrayHelper::getValue(static::ACTION_TITLES, $action->id, static::Title());
+		$this->view->title = $this->initViewTitle($this->view->title??ArrayHelper::getValue(static::ACTION_TITLES, $action->id, static::Title()));
 		if (!isset($this->view->params['breadcrumbs'])) {
 			if ($this->defaultAction === $action->id) {
 				$this->view->params['breadcrumbs'][] = static::Title();
@@ -282,7 +282,6 @@ class DefaultController extends Controller {
 	 * @throws InvalidConfigException
 	 * @throws ReflectionException
 	 * @throws UnknownClassException
-	 * @noinspection PhpUndefinedMethodInspection Существование метода проверяется при инициализации поисковой модели
 	 */
 	public function actionIndex() {
 		$params = Yii::$app->request->queryParams;
@@ -489,6 +488,15 @@ class DefaultController extends Controller {
 			);
 		}
 		return $pkValue;
+	}
+
+	/**
+	 * @param string $title
+	 * @return string
+	 */
+	public function initViewTitle(string $title):string {
+		$model = $this->getModelByPKOrFail($this->checkPrimaryKey());
+		return preg_replace_callback("/\{([\w]+)}/", static fn(array $matches) => ArrayHelper::getValue($model, $matches[1], '%undefined%'), $title);
 	}
 
 }
