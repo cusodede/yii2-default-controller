@@ -478,14 +478,18 @@ class DefaultController extends Controller {
 	}
 
 	/**
+	 * @param bool $required Ключ обязателен, если не найден - то выдать исключение, иначе null
 	 * @return mixed
 	 * @throws BadRequestHttpException
 	 */
-	protected function checkPrimaryKey():mixed {
+	protected function checkPrimaryKey(bool $required = true):mixed {
 		if (null === $pkValue = ArrayHelper::getValue($this->request->queryParams, $this->getPrimaryKeyName())) {
-			throw new BadRequestHttpException(
-				Yii::t('yii', 'Missing required parameters: {params}', ['params' => $this->getPrimaryKeyName()])
-			);
+			if ($required) {
+				throw new BadRequestHttpException(
+					Yii::t('yii', 'Missing required parameters: {params}', ['params' => $this->getPrimaryKeyName()])
+				);
+			}
+			return null;
 		}
 		return $pkValue;
 	}
@@ -495,7 +499,7 @@ class DefaultController extends Controller {
 	 * @return string
 	 */
 	public function initViewTitle(string $title):string {
-		$model = $this->getModelByPKOrFail($this->checkPrimaryKey());
+		if (null === $model = $this->model::findOne($this->checkPrimaryKey(false))) return $title;
 		return preg_replace_callback("/\{([\w]+)}/", static fn(array $matches) => ArrayHelper::getValue($model, $matches[1], '%undefined%'), $title);
 	}
 
