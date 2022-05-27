@@ -18,6 +18,15 @@ class UsersController extends DefaultController {
 
 	public ?string $modelSearchClass = UsersSearch::class;
 
+	protected const ACTION_TITLES = [
+		'view' => 'Просмотр {username}',
+		'edit' => 'Редактирование {username}',
+		'update' => 'Редактирование {username}',
+		'create' => 'Создание',
+		'import' => 'Загрузка',
+		'import-status' => 'Статус загрузки'
+	];
+
 	/**
 	 * {@inheritdoc}
 	 */

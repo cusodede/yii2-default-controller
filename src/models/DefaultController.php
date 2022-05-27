@@ -174,7 +174,7 @@ class DefaultController extends Controller {
 	 * {@inheritdoc}
 	 */
 	public function beforeAction($action):bool {
-		$this->view->title = $this->view->title??ArrayHelper::getValue(static::ACTION_TITLES, $action->id, static::Title());
+		$this->view->title = $this->initViewTitle($this->view->title??ArrayHelper::getValue(static::ACTION_TITLES, $action->id, static::Title()));
 		if (!isset($this->view->params['breadcrumbs'])) {
 			if ($this->defaultAction === $action->id) {
 				$this->view->params['breadcrumbs'][] = static::Title();
@@ -282,7 +282,6 @@ class DefaultController extends Controller {
 	 * @throws InvalidConfigException
 	 * @throws ReflectionException
 	 * @throws UnknownClassException
-	 * @noinspection PhpUndefinedMethodInspection Существование метода проверяется при инициализации поисковой модели
 	 */
 	public function actionIndex() {
 		$params = Yii::$app->request->queryParams;
@@ -479,16 +478,29 @@ class DefaultController extends Controller {
 	}
 
 	/**
+	 * @param bool $required Ключ обязателен, если не найден - то выдать исключение, иначе null
 	 * @return mixed
 	 * @throws BadRequestHttpException
 	 */
-	protected function checkPrimaryKey():mixed {
+	protected function checkPrimaryKey(bool $required = true):mixed {
 		if (null === $pkValue = ArrayHelper::getValue($this->request->queryParams, $this->getPrimaryKeyName())) {
-			throw new BadRequestHttpException(
-				Yii::t('yii', 'Missing required parameters: {params}', ['params' => $this->getPrimaryKeyName()])
-			);
+			if ($required) {
+				throw new BadRequestHttpException(
+					Yii::t('yii', 'Missing required parameters: {params}', ['params' => $this->getPrimaryKeyName()])
+				);
+			}
+			return null;
 		}
 		return $pkValue;
+	}
+
+	/**
+	 * @param string $title
+	 * @return string
+	 */
+	public function initViewTitle(string $title):string {
+		if (null === $model = $this->model::findOne($this->checkPrimaryKey(false))) return $title;
+		return preg_replace_callback("/\{([\w]+)}/", static fn(array $matches) => ArrayHelper::getValue($model, $matches[1], '%undefined%'), $title);
 	}
 
 }

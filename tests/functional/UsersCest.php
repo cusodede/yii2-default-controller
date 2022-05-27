@@ -40,4 +40,18 @@ class UsersCest {
 		$I->assertEquals('test_user_2', $model->login);
 		$I->assertEquals('123', $model->password);
 	}
+
+	/**
+	 * @param FunctionalTester $I
+	 * @return void
+	 * @throws ModuleException
+	 * @throws Exception
+	 */
+	public function testViewTitles(FunctionalTester $I):void {
+		$user = Users::CreateUser()->saveAndReturn();
+		$I->amLoggedInAs($user);
+		$I->amOnRoute('users/view?id=1');
+		$I->seeResponseCodeIs(200);
+		$I->canSeeInTitle("Просмотр {$user->username}");
+	}
 }
