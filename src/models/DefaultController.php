@@ -44,7 +44,7 @@ use yii\web\Response;
  * @property-read ActiveRecordInterface $searchModel
  * @property-read ActiveRecordInterface|ActiveRecordTrait $model
  */
-class DefaultController extends Controller {
+abstract class DefaultController extends Controller {
 	use ControllerTrait;
 
 	/**
