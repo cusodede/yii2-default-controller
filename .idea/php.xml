@@ -15,8 +15,6 @@
       <path value="$PROJECT_DIR$/vendor/pozitronik/yii2-traits" />
       <path value="$PROJECT_DIR$/vendor/pozitronik/yii2-helpers" />
       <path value="$PROJECT_DIR$/vendor/pozitronik/yii2-grid-config" />
-      <path value="$PROJECT_DIR$/vendor/pozitronik/yii2-cachedwidget" />
-      <path value="$PROJECT_DIR$/vendor/pozitronik/yii2-badgewidget" />
       <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
       <path value="$PROJECT_DIR$/vendor/composer" />
       <path value="$PROJECT_DIR$/vendor/npm-asset/bootstrap" />
