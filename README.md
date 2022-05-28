@@ -33,4 +33,4 @@ php composer.phar require cusodede/yii2-default-controller "^1.0.0"
 
 # Запуск локальных тестов
 
-Скопируйте`tests/.env.example` в `tests/.env`, изменив в нём настройки согласно вашему локальному окружению. Затем выполните команду `php vendor/bin/codecept run`.
+Скопируйте `tests/.env.example` в `tests/.env`, изменив в нём настройки согласно вашему локальному окружению. Затем выполните команду `php vendor/bin/codecept run`.
