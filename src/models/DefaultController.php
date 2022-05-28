@@ -401,14 +401,12 @@ abstract class DefaultController extends Controller {
 
 	/**
 	 * Аяксовый поиск в Select2
-	 * @param string|null $term
-	 * @param string $column
-	 * @param string|null $concatFields Это список полей для конкатенации. Если этот параметр передан, то вернем
-	 * результат CONCAT() для этих полей вместо поля параметра $column
+	 * @param string|null $term Значение поиска.
+	 * @param string $column Атрибут для поиска. Для поиска по нескольким атрибутам, указываем их через запятую.
 	 * @return string[][]
 	 * @throws Throwable
 	 */
-	public function actionAjaxSearch(?string $term, string $column = 'name', string $concatFields = null):array {
+	public function actionAjaxSearch(?string $term, string $column = 'name'):array {
 		$out = [
 			'results' => [
 				'id' => '',
@@ -417,16 +415,14 @@ abstract class DefaultController extends Controller {
 		];
 		if (null !== $term) {
 			$tableName = $this->model::tableName();
-			if ($concatFields) {
-				$concatFieldsArray = preg_filter('/^/', "{$tableName}.", explode(',', $concatFields));
-				$concatFieldsArray = array_map(static fn($item) => 'COALESCE('.$item.", '')", $concatFieldsArray);
-				$textFields = 'CONCAT('.implode(",' ',", $concatFieldsArray).')';
-			} else {
-				$textFields = "{$tableName}.{$column}";
-			}
+			$columnsString = implode(",", preg_filter('/^/', "{$tableName}.", array_map(static fn($value) => trim($value), array_filter(explode(',', $column), static fn($value) => !empty(trim($value))))));
+			$textFields = 'CONCAT('.$columnsString.')';//CONCAT выполняет также приведение типов в postgresql
 			$query = $this->model::find()
 				->select(["{$tableName}.{$this->getPrimaryKeyName()}", "{$textFields} as text"])
-				->where(['like', "{$tableName}.{$column}", "%$term%", false])
+				->where([match (Yii::$app->db->driverName) {
+					'pgsql' => 'ilike',
+					default => 'like'
+				}, $textFields, "%$term%", false])
 				->distinct();
 
 			if ($this->hasMethod($query, 'active')) {
