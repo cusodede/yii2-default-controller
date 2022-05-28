@@ -143,7 +143,7 @@ class DefaultController extends Controller {
 			return Yii::createObject($actionMap[$id], [$id, $this]);
 		}
 
-		if (preg_match('/^(?:[a-z0-9_]+-)*[a-z0-9_]+$/', $id)) {
+		if (preg_match('/^(?:[a-z\d_]+-)*[a-z\d_]+$/', $id)) {
 			$methodName = 'action'.str_replace(' ', '', ucwords(str_replace('-', ' ', $id)));
 			if (method_exists($this, $methodName) && !in_array($methodName, $this->disabledActions, true)) {
 				$method = new ReflectionMethod($this, $methodName);
@@ -502,7 +502,7 @@ class DefaultController extends Controller {
 	 */
 	public function initViewTitle(string $title):string {
 		if (null === $model = $this->model::findOne($this->checkPrimaryKey(false))) return $title;
-		return preg_replace_callback("/\{([\w]+)}/", static fn(array $matches) => ArrayHelper::getValue($model, $matches[1], '%undefined%'), $title);
+		return preg_replace_callback("/\{(\w+)}/", static fn(array $matches) => ArrayHelper::getValue($model, $matches[1], '%undefined%'), $title);
 	}
 
 }
