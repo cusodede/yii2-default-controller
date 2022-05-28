@@ -108,28 +108,41 @@ abstract class DefaultController extends Controller {
 	public bool $enablePrototypeMenu = false;
 
 	/**
-	 * @return string|null
+	 * @inheritDoc
 	 */
-	public function getPrimaryKeyName():?string {
-		return static::$_primaryKeyName ??= $this->model::pkName();
+	public function behaviors():array {
+		return [
+			[
+				'class' => ContentNegotiator::class,
+				'only' => ['ajax-search'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON
+				]
+			],
+			[
+				'class' => AjaxFilter::class,
+				'only' => ['ajax-search']
+			]
+		];
 	}
 
 	/**
-	 * Возвращает настройку экшена, на который будет переходить редирект после создания модели.
-	 * @return string
-	 * @throws Exception
+	 * @inheritDoc
 	 */
-	protected static function getAfterCreateAction():string {
-		return static::$_afterCreateAction ??= ArrayHelper::getValue(Yii::$app->components, 'defaultController.afterCreateAction', 'index');
+	public function getViewPath():string {
+		return static::ViewPath();
 	}
 
 	/**
-	 * Возвращает настройку экшена, на который будет переходить редирект после изменения модели.
-	 * @return string
-	 * @throws Exception
+	 * @inheritDoc
 	 */
-	protected static function getAfterUpdateAction():string {
-		return static::$_afterUpdateAction ??= ArrayHelper::getValue(Yii::$app->components, 'defaultController.afterUpdateAction', 'index');
+	public function actions():array {
+		return ArrayHelper::merge(parent::actions(), [
+			'editAction' => [
+				'class' => EditableFieldAction::class,
+				'modelClass' => $this->modelClass
+			],
+		]);
 	}
 
 	/**
@@ -157,21 +170,6 @@ abstract class DefaultController extends Controller {
 	}
 
 	/**
-	 * @return string
-	 */
-	public static function Title():string {
-		return static::DEFAULT_TITLE??VendorControllerHelper::ExtractControllerId(static::class);
-	}
-
-	/**
-	 * @return string
-	 * @throws InvalidConfigException
-	 */
-	public static function ViewPath():string {
-		return '@cusodede/web/default_controller/views/site'.DIRECTORY_SEPARATOR.(BootstrapHelper::isBs4()?'bs4':'bs3');
-	}
-
-	/**
 	 * {@inheritdoc}
 	 */
 	public function beforeAction($action):bool {
@@ -189,94 +187,43 @@ abstract class DefaultController extends Controller {
 	}
 
 	/**
-	 * @inheritDoc
+	 * @return string|null
 	 */
-	public function behaviors():array {
-		return [
-			[
-				'class' => ContentNegotiator::class,
-				'only' => ['ajax-search'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON
-				]
-			],
-			[
-				'class' => AjaxFilter::class,
-				'only' => ['ajax-search']
-			]
-		];
+	public function getPrimaryKeyName():?string {
+		return static::$_primaryKeyName ??= $this->model::pkName();
 	}
 
 	/**
-	 * @inheritDoc
+	 * Возвращает настройку экшена, на который будет переходить редирект после создания модели.
+	 * @return string
+	 * @throws Exception
 	 */
-	public function getViewPath():string {
-		return static::ViewPath();
+	protected static function getAfterCreateAction():string {
+		return static::$_afterCreateAction ??= ArrayHelper::getValue(Yii::$app->components, 'defaultController.afterCreateAction', 'index');
 	}
 
 	/**
-	 * @return ActiveRecordInterface
-	 * @throws InvalidConfigException(
+	 * Возвращает настройку экшена, на который будет переходить редирект после изменения модели.
+	 * @return string
+	 * @throws Exception
 	 */
-	public function getModel():ActiveRecordInterface {
-		return null !== $this->modelClass
-			?new $this->modelClass()
-			:throw new InvalidConfigException('Не установлено свойство $modelClass');
+	protected static function getAfterUpdateAction():string {
+		return static::$_afterUpdateAction ??= ArrayHelper::getValue(Yii::$app->components, 'defaultController.afterUpdateAction', 'index');
 	}
 
 	/**
-	 * @return ActiveRecordInterface
-	 * @throws InvalidConfigException(
+	 * @return string
 	 */
-	public function getSearchModel():ActiveRecordInterface {
-		if (null === $this->modelSearchClass) {
-			throw new InvalidConfigException('Не установлено свойство $modelSearchClass');
-		}
-		if (!method_exists($this->modelSearchClass, 'search')) {
-			throw new InvalidConfigException("Класс {$this->modelSearchClass} должен иметь метод search()");
-		}
-		return new $this->modelSearchClass();
+	public static function Title():string {
+		return static::DEFAULT_TITLE??VendorControllerHelper::ExtractControllerId(static::class);
 	}
 
 	/**
-	 * @inheritDoc
+	 * @return string
+	 * @throws InvalidConfigException
 	 */
-	public function actions():array {
-		return ArrayHelper::merge(parent::actions(), [
-			'editAction' => [
-				'class' => EditableFieldAction::class,
-				'modelClass' => $this->modelClass
-			],
-		]);
-	}
-
-	/**
-	 * Генерирует меню для доступа ко всем контроллерам по указанному пути
-	 * @param string $alias
-	 * @return array
-	 * @throws Throwable
-	 * @throws UnknownClassException
-	 * @deprecated since 1.0.8
-	 */
-	public static function MenuItems(string $alias = "@app/controllers"):array {
-		$items = [];
-		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(Yii::getAlias($alias)),
-			RecursiveIteratorIterator::SELF_FIRST);
-		/** @var RecursiveDirectoryIterator $file */
-		foreach ($files as $file) {
-			/** @var self $model */
-			if ($file->isFile()
-				&& ('php' === $file->getExtension())
-				&& (null !== $model = VendorControllerHelper::LoadControllerClassFromFile($file->getRealPath(), null, [self::class]))
-				&& $model->enablePrototypeMenu) {
-				$items[] = [
-					'label' => $model->id,
-					'url' => [$model->link($model->defaultAction)],
-					'model' => $model,
-				];
-			}
-		}
-		return $items;
+	public static function ViewPath():string {
+		return '@cusodede/web/default_controller/views/site'.DIRECTORY_SEPARATOR.(BootstrapHelper::isBs4()?'bs4':'bs3');
 	}
 
 	/**
@@ -444,6 +391,59 @@ abstract class DefaultController extends Controller {
 	 */
 	protected function addAdditionalAjaxConditions(QueryInterface $query):ActiveQueryInterface {
 		return $query;
+	}
+
+	/**
+	 * @return ActiveRecordInterface
+	 * @throws InvalidConfigException(
+	 */
+	public function getModel():ActiveRecordInterface {
+		return null !== $this->modelClass
+			?new $this->modelClass()
+			:throw new InvalidConfigException('Не установлено свойство $modelClass');
+	}
+
+	/**
+	 * @return ActiveRecordInterface
+	 * @throws InvalidConfigException(
+	 */
+	public function getSearchModel():ActiveRecordInterface {
+		if (null === $this->modelSearchClass) {
+			throw new InvalidConfigException('Не установлено свойство $modelSearchClass');
+		}
+		if (!method_exists($this->modelSearchClass, 'search')) {
+			throw new InvalidConfigException("Класс {$this->modelSearchClass} должен иметь метод search()");
+		}
+		return new $this->modelSearchClass();
+	}
+
+	/**
+	 * Генерирует меню для доступа ко всем контроллерам по указанному пути
+	 * @param string $alias
+	 * @return array
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 * @deprecated since 1.0.8
+	 */
+	public static function MenuItems(string $alias = "@app/controllers"):array {
+		$items = [];
+		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(Yii::getAlias($alias)),
+			RecursiveIteratorIterator::SELF_FIRST);
+		/** @var RecursiveDirectoryIterator $file */
+		foreach ($files as $file) {
+			/** @var self $model */
+			if ($file->isFile()
+				&& ('php' === $file->getExtension())
+				&& (null !== $model = VendorControllerHelper::LoadControllerClassFromFile($file->getRealPath(), null, [self::class]))
+				&& $model->enablePrototypeMenu) {
+				$items[] = [
+					'label' => $model->id,
+					'url' => [$model->link($model->defaultAction)],
+					'model' => $model,
+				];
+			}
+		}
+		return $items;
 	}
 
 	/**
