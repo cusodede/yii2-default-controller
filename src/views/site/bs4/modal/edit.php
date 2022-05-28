@@ -1,11 +1,10 @@
-<?php /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+<?php
 declare(strict_types = 1);
 
 /**
  * @var View $this
  * @var ActiveRecordInterface $model
  */
-use pozitronik\widgets\BadgeWidget;
 use yii\bootstrap4\ActiveForm;
 use yii\bootstrap4\Modal;
 use yii\db\ActiveRecordInterface;
@@ -15,12 +14,9 @@ $modelName = $model->formName();
 ?>
 <?php
 Modal::begin([
-	'id' => "{$modelName}-modal-edit-{$model->id}",
+	'id' => "{$modelName}-modal-edit-{$model->getPrimaryKey(false)}",
 	'size' => Modal::SIZE_LARGE,
-	'title' => BadgeWidget::widget([
-		'items' => $model,
-		'subItem' => 'id'
-	]),
+	'title' => $this->title,
 	'footer' => $this->render('../subviews/editPanelFooter', [
 		'model' => $model,
 		'form' => "{$modelName}-modal-edit"

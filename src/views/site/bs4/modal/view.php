@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+<?php
 declare(strict_types = 1);
 
 /**
@@ -6,7 +6,6 @@ declare(strict_types = 1);
  * @var ActiveRecordInterface $model
  */
 
-use pozitronik\widgets\BadgeWidget;
 use yii\bootstrap4\Modal;
 use yii\db\ActiveRecordInterface;
 use yii\web\View;
@@ -14,12 +13,9 @@ use yii\web\View;
 $modelName = $model->formName();
 ?>
 <?php Modal::begin([
-	'id' => "{$modelName}-modal-view-{$model->id}",
+	'id' => "{$modelName}-modal-view-{$model->getPrimaryKey(false)}",
 	'size' => Modal::SIZE_LARGE,
-	'title' => BadgeWidget::widget([
-		'items' => $model,
-		'subItem' => 'id'
-	]),
+	'title' => $this->title,
 	'options' => [
 		'tabindex' => false, // important for Select2 to work properly
 		'class' => 'modal-dialog-large'

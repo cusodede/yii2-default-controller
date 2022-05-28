@@ -5,7 +5,6 @@ declare(strict_types = 1);
  * @var View $this
  * @var ActiveRecordInterface $model
  */
-use pozitronik\widgets\BadgeWidget;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Modal;
 use yii\db\ActiveRecordInterface;
@@ -17,10 +16,7 @@ $modelName = $model->formName();
 Modal::begin([
 	'id' => "{$modelName}-modal-edit-{$model->id}",
 	'size' => Modal::SIZE_LARGE,
-	'title' => BadgeWidget::widget([
-		'items' => $model,
-		'subItem' => 'id'
-	]),
+	'title' => $this->title,
 	'footer' => $this->render('../subviews/editPanelFooter', [
 		'model' => $model,
 		'form' => "{$modelName}-modal-edit"
