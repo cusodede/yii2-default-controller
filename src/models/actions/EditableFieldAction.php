@@ -25,17 +25,18 @@ class EditableFieldAction extends Action {
 	public string $scenario = Model::SCENARIO_DEFAULT;
 
 	/**
-	 * @param int $id
 	 * @return array[]|object|Response[]|string[]|string[][]
 	 * @throws Throwable
 	 * @throws InvalidConfigException
 	 * @throws Exception
 	 * @throws NotFoundHttpException
 	 */
-	public function run(int $id) {
+	public function run() {
 		$result = ['output' => '', 'message' => ''];
 
-		$model = $this->findModel($id);
+		if (null === $model = $this->findModel(Yii::$app->request->post('editableKey'))) {
+			return ['output' => '', 'message' => 'No valid editable model found'];
+		}
 
 		if ($this->checkAccess) {
 			call_user_func($this->checkAccess, $this->id, $model);
