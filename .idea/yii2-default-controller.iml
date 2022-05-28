@@ -17,8 +17,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/pozitronik/yii2-traits" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/pozitronik/yii2-helpers" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/pozitronik/yii2-grid-config" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/pozitronik/yii2-cachedwidget" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/pozitronik/yii2-badgewidget" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/paragonie/random_compat" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/npm-asset/bootstrap" />

@@ -15,7 +15,6 @@ use app\models\UsersSearch;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 use pozitronik\traits\traits\ControllerTrait;
-use pozitronik\widgets\BadgeWidget;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\web\View;
@@ -76,10 +75,7 @@ $id = "{$modelName}-index-grid";
 		],
 		[
 			'attribute' => 'name',
-			'value' => static fn(Users $model):string => BadgeWidget::widget([
-				'items' => $model,
-				'subItem' => 'username',
-			]),
+			'value' => 'username',
 			'format' => 'raw',
 		],
 	]
