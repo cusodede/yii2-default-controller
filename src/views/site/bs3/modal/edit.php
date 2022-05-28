@@ -3,12 +3,12 @@ declare(strict_types = 1);
 
 /**
  * @var View $this
- * @var Model $model
+ * @var ActiveRecordInterface $model
  */
 use pozitronik\widgets\BadgeWidget;
-use yii\base\Model;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Modal;
+use yii\db\ActiveRecordInterface;
 use yii\web\View;
 
 $modelName = $model->formName();

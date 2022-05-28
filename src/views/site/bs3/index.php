@@ -4,7 +4,7 @@ declare(strict_types = 1);
 /**
  * @var View $this
  * @var Model $searchModel
- * @var Model $model
+ * @var ActiveRecordInterface $model
  * @var string $modelName
  * @var ControllerTrait $controller
  * @var ActiveDataProvider $dataProvider
@@ -18,6 +18,7 @@ use pozitronik\helpers\Utils;
 use pozitronik\traits\traits\ControllerTrait;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveRecordInterface;
 use yii\helpers\Html;
 use yii\web\View;
 

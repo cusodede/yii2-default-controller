@@ -1,15 +1,15 @@
-<?php /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+<?php
 declare(strict_types = 1);
 
 /**
  * @var View $this
- * @var Model $model
+ * @var ActiveRecordInterface $model
  * @var ActiveForm|string $form
  */
 
-use yii\base\Model;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
+use yii\db\ActiveRecordInterface;
 use yii\web\View;
 
 ?>

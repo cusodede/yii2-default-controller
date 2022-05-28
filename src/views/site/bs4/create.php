@@ -3,11 +3,11 @@ declare(strict_types = 1);
 
 /**
  * @var View $this
- * @var Model $model
+ * @var ActiveRecordInterface $model
  */
 
-use yii\base\Model;
 use yii\bootstrap4\ActiveForm;
+use yii\db\ActiveRecordInterface;
 use yii\web\View;
 
 ?>
