@@ -499,6 +499,7 @@ class DefaultController extends Controller {
 	/**
 	 * @param string $title
 	 * @return string
+	 * @throws BadRequestHttpException
 	 */
 	public function initViewTitle(string $title):string {
 		if (null === $model = $this->model::findOne($this->checkPrimaryKey(false))) return $title;
