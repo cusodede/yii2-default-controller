@@ -39,7 +39,7 @@ use yii\web\Response;
  * Все контроллеры и все вью плюс-минус одинаковые, поэтому можно сэкономить на прототипировании
  * @property string $modelClass Модель, обслуживаемая контроллером
  * @property string $modelSearchClass Поисковая модель, обслуживаемая контроллером
- * @property bool $enablePrototypeMenu Включать ли контроллер в меню списка прототипов
+ * @property bool $enablePrototypeMenu Включать ли контроллер в меню списка прототипов. Параметр объявлен устаревшим, и будет убран.
  *
  * @property-read ActiveRecordInterface $searchModel
  * @property-read ActiveRecordInterface|ActiveRecordTrait $model
@@ -103,8 +103,9 @@ class DefaultController extends Controller {
 
 	/**
 	 * @var bool $enablePrototypeMenu
+	 * @deprecated since 1.0.8.
 	 */
-	public bool $enablePrototypeMenu = true;
+	public bool $enablePrototypeMenu = false;
 
 	/**
 	 * @return string|null
@@ -255,6 +256,7 @@ class DefaultController extends Controller {
 	 * @return array
 	 * @throws Throwable
 	 * @throws UnknownClassException
+	 * @deprecated since 1.0.8
 	 */
 	public static function MenuItems(string $alias = "@app/controllers"):array {
 		$items = [];
