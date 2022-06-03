@@ -23,7 +23,7 @@
 		"php": ">=8.0",
 		"pozitronik/yii2-traits": "^1.0.0",
 		"pozitronik/yii2-grid-config": "^1.0.0",
-		"kartik-v/yii2-grid": "dev-master"
+		"kartik-v/yii2-grid": "^3.5.0"
 	},
 	"require-dev": {
 		"yiisoft/yii2": "~2.0.0",
