@@ -189,7 +189,7 @@ abstract class DefaultController extends Controller {
 	 * @return string|null
 	 */
 	public function getPrimaryKeyName():?string {
-		if ($this->hasMethod($this->modelClass, 'pkName')) {//probably, ActiveRecordTrait
+		if (method_exists($this->modelClass, 'pkName')) {//probably, ActiveRecordTrait
 			return static::$_primaryKeyName ??= $this->model::pkName();
 		}
 		//fallback to vanilla ActiveRecord
@@ -376,7 +376,7 @@ abstract class DefaultController extends Controller {
 				}, $textFields, "%$term%", false])
 				->distinct();
 
-			if ($this->hasMethod($query, 'active')) {
+			if (method_exists($query, 'active')) {
 				$query->active();
 			}
 
