@@ -6,10 +6,11 @@ declare(strict_types = 1);
  * @var Model $searchModel
  * @var ActiveRecordInterface $model
  * @var string $modelName
- * @var ControllerTrait $controller
+ * @var ControllerTrait|DefaultController $controller
  * @var ActiveDataProvider $dataProvider
  */
 
+use cusodede\web\default_controller\models\DefaultController;
 use kartik\base\AssetBundle;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
@@ -53,6 +54,6 @@ $id = "{$modelName}-index-grid";
 				'template' => '<div class="btn-group">{update}{view}{delete}</div>',
 				'dropdown' => true,
 			]
-		], array_keys($model->attributes)),
+		], $controller->configureGridColumns($model)),
 	])
 ]) ?>
