@@ -9,7 +9,6 @@ use Exception;
 use pozitronik\helpers\BootstrapHelper;
 use pozitronik\helpers\ControllerHelper as VendorControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
-use pozitronik\traits\traits\ActiveRecordTrait;
 use pozitronik\traits\traits\ControllerTrait;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -42,7 +41,7 @@ use yii\web\Response;
  * @property bool $enablePrototypeMenu Включать ли контроллер в меню списка прототипов. Параметр объявлен устаревшим, и будет убран.
  *
  * @property-read ActiveRecordInterface $searchModel
- * @property-read ActiveRecordInterface|ActiveRecordTrait $model
+ * @property-read ActiveRecordInterface $model
  */
 abstract class DefaultController extends Controller {
 	use ControllerTrait;
@@ -190,7 +189,12 @@ abstract class DefaultController extends Controller {
 	 * @return string|null
 	 */
 	public function getPrimaryKeyName():?string {
-		return static::$_primaryKeyName ??= $this->model::pkName();
+		if ($this->hasMethod($this->modelClass, 'pkName')) {//probably, ActiveRecordTrait
+			return static::$_primaryKeyName ??= $this->model::pkName();
+		}
+		//fallback to vanilla ActiveRecord
+		return $this->model::primaryKey()[0]??null;
+
 	}
 
 	/**
