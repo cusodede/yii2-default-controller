@@ -8,16 +8,7 @@
 
 # Установка через Composer
 
-Добавьте
-
-```
-{
-	"type": "vcs",
-	"url": "https://github.com/cusodede/yii2-default-controller"
-}
-```
-
-В список репозиториев файла `composer.json`, затем запустите
+Запустите
 
 ```
 php composer.phar require cusodede/yii2-default-controller "^1.0.0"
