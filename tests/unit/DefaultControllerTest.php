@@ -10,6 +10,7 @@ use app\models\ConfigUsers;
 use app\models\TestUsers;
 use app\models\Users;
 use Codeception\Test\Unit;
+use cusodede\web\default_controller\helpers\ControllerHelper;
 use kartik\base\Config;
 use Yii;
 use yii\db\Exception;
@@ -58,7 +59,7 @@ class DefaultControllerTest extends Unit {
 	public function testConfigureGridColumns():void {
 		/*Колонки никак не сконфигурированы, ожидаем увидеть все по умолчанию*/
 		$controller = new UsersController('users', Yii::$app);
-		self::assertEquals(['id', 'username', 'login', 'password'], $controller->configureGridColumns());
+		self::assertEquals(array_merge(ControllerHelper::getDefaultActionColumn(), ['id', 'username', 'login', 'password']), $controller->configureGridColumns());
 		$controller = new VanillaUsersController('vanilla-users', Yii::$app);
 		/*Колонки сконфигурированы в контроллере*/
 		self::assertEquals(['id', 'login:text'], $controller->configureGridColumns());
