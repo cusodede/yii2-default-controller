@@ -11,6 +11,7 @@ use yii\db\ActiveRecordInterface;
 use yii\db\Exception as DbException;
 use yii\widgets\ActiveForm;
 use pozitronik\helpers\ControllerHelper as VendorControllerHelper;
+use kartik\grid\ActionColumn;
 
 /**
  * Вспомогательный хелпер
@@ -117,5 +118,19 @@ class ControllerHelper extends VendorControllerHelper {
 			$result[Html::getInputId($model, $attribute)] = $errors;
 		}
 		return $result;
+	}
+
+	/**
+	 * Получение настроек ActionColumn по умолчанию
+	 * @return array[]
+	 */
+	public static function getDefaultActionColumn():array {
+		return [
+			[
+				'class' => ActionColumn::class,
+				'template' => '<div class="btn-group">{update}{view}{delete}</div>',
+				'dropdown' => true,
+			]
+		];
 	}
 }

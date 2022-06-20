@@ -529,7 +529,12 @@ abstract class DefaultController extends Controller {
 		if (method_exists($this, 'gridColumns') && $result = $this->gridColumns()) {
 			return $result;
 		}
-		$result = ArrayHelper::getValue(Yii::$app->components, 'default_controller.models.'.$model::class.'.gridColumns', array_keys($model->attributes));
+		$result = ArrayHelper::getValue(
+			Yii::$app->components,
+			'default_controller.models.'.$model::class.'.gridColumns',
+			array_merge(ControllerHelper::getDefaultActionColumn(), array_keys($model->attributes))
+		);
+
 		return (is_callable($result))
 			?$result()
 			:$result;

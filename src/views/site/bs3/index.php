@@ -12,7 +12,6 @@ declare(strict_types = 1);
 
 use cusodede\web\default_controller\models\DefaultController;
 use kartik\base\AssetBundle;
-use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 use pozitronik\grid_config\GridConfig;
 use pozitronik\helpers\Utils;
@@ -48,12 +47,6 @@ $id = "{$modelName}-index-grid";
 		'export' => false,
 		'resizableColumns' => true,
 		'responsive' => true,
-		'columns' => array_merge([
-			[
-				'class' => ActionColumn::class,
-				'template' => '<div class="btn-group">{update}{view}{delete}</div>',
-				'dropdown' => true,
-			]
-		], $controller->configureGridColumns($model)),
+		'columns' => $controller->configureGridColumns($model),
 	])
 ]) ?>
