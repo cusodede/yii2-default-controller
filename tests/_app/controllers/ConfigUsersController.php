@@ -3,18 +3,18 @@ declare(strict_types = 1);
 
 namespace app\controllers;
 
-use app\models\VanillaUsers;
+use app\models\ConfigUsers;
 use app\models\VanillaUsersSearch;
 use cusodede\web\default_controller\models\DefaultController;
 
 /**
- * Class VanillaUsersController
+ * Class ConfigUsersController
  */
-class VanillaUsersController extends DefaultController {
+class ConfigUsersController extends DefaultController {
 
 	protected const DEFAULT_TITLE = "Сотрудники";
 
-	public ?string $modelClass = VanillaUsers::class;
+	public ?string $modelClass = ConfigUsers::class;
 
 	public ?string $modelSearchClass = VanillaUsersSearch::class;
 
@@ -34,13 +34,4 @@ class VanillaUsersController extends DefaultController {
 		return '@app/views/users';
 	}
 
-	/**
-	 * @return string[]
-	 */
-	public function gridColumns():array {
-		return [
-			'id',
-			'login:text'
-		];
-	}
 }

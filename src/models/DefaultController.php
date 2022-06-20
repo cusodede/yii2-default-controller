@@ -189,7 +189,8 @@ abstract class DefaultController extends Controller {
 	 * @return string|null
 	 */
 	public function getPrimaryKeyName():?string {
-		if ($this->hasMethod($this->modelClass, 'pkName')) {//probably, ActiveRecordTrait
+		if (method_exists($this->modelClass, 'pkName')) {//probably, ActiveRecordTrait
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			return static::$_primaryKeyName ??= $this->model::pkName();
 		}
 		//fallback to vanilla ActiveRecord
@@ -240,6 +241,7 @@ abstract class DefaultController extends Controller {
 		$params = Yii::$app->request->queryParams;
 		$searchModel = $this->getSearchModel();
 
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$viewParams = [
 			'searchModel' => $searchModel,
 			'dataProvider' => $searchModel->search($params),
@@ -376,7 +378,7 @@ abstract class DefaultController extends Controller {
 				}, $textFields, "%$term%", false])
 				->distinct();
 
-			if ($this->hasMethod($query, 'active')) {
+			if (method_exists($query, 'active')) {
 				$query->active();
 			}
 
@@ -504,6 +506,38 @@ abstract class DefaultController extends Controller {
 	public function initViewTitle(string $title):string {
 		if (null === $model = $this->model::findOne($this->checkPrimaryKey(false))) return $title;
 		return preg_replace_callback("/\{(\w+)}/", static fn(array $matches) => ArrayHelper::getValue($model, $matches[1], '%undefined%'), $title);
+	}
+
+	/**
+	 * Метод пытается сконфигурировать набор колонок для грида в индексном шаблоне по умолчанию.
+	 * По порядку проверяются:
+	 * - метод gridColumns() в модели,
+	 * - метод gridColumns() в контроллере,
+	 * - конфигурация Yii::$app->components->default_controller->models->{Model::class}->gridColumns
+	 *
+	 * и если ничего из этого не существует, то происходит fallback на отображение всех колонок as is.
+	 *
+	 * @param null|ActiveRecordInterface $model
+	 * @return array
+	 * @throws Exception
+	 */
+	public function configureGridColumns(?ActiveRecordInterface $model = null):array {
+		if (null === $model) $model = $this->model;
+		if (method_exists($model, 'gridColumns') && $result = $model->gridColumns()) {
+			return $result;
+		}
+		if (method_exists($this, 'gridColumns') && $result = $this->gridColumns()) {
+			return $result;
+		}
+		$result = ArrayHelper::getValue(
+			Yii::$app->components,
+			'default_controller.models.'.$model::class.'.gridColumns',
+			array_merge(ControllerHelper::getDefaultActionColumn(), array_keys($model->attributes))
+		);
+
+		return (is_callable($result))
+			?$result()
+			:$result;
 	}
 
 }
