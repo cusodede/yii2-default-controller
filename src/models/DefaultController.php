@@ -532,7 +532,7 @@ abstract class DefaultController extends Controller {
 		$result = ArrayHelper::getValue(
 			Yii::$app->components,
 			'default_controller.models.'.$model::class.'.gridColumns',
-			array_merge(ControllerHelper::getDefaultActionColumn(), array_keys($model->attributes))
+			array_merge(ControllerHelper::getDefaultActionColumn($this), array_keys($model->attributes))
 		);
 
 		return (is_callable($result))
