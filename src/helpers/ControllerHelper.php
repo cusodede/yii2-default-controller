@@ -3,18 +3,14 @@ declare(strict_types = 1);
 
 namespace cusodede\web\default_controller\helpers;
 
-use cusodede\web\default_controller\models\DefaultController;
-use ReflectionClass;
 use Throwable;
 use Yii;
 use yii\base\Model;
 use yii\bootstrap4\Html;
 use yii\db\ActiveRecordInterface;
 use yii\db\Exception as DbException;
-use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 use pozitronik\helpers\ControllerHelper as VendorControllerHelper;
-use kartik\grid\ActionColumn;
 
 /**
  * Вспомогательный хелпер
@@ -123,36 +119,4 @@ class ControllerHelper extends VendorControllerHelper {
 		return $result;
 	}
 
-	/**
-	 * Получение настроек ActionColumn по умолчанию
-	 * @param DefaultController $controller
-	 * @return array[]
-	 */
-	public static function getDefaultActionColumn(DefaultController $controller):array {
-		return [
-			[
-				'class' => ActionColumn::class,
-				'template' => '<div class="btn-group">'.
-					(self::isDisableButtonVisible($controller, ['actionUpdate', 'actionEdit'])?'':'{update}').
-					(self::isDisableButtonVisible($controller, ['actionView'])?'':'{view}').
-					(self::isDisableButtonVisible($controller, ['actionDelete'])?'':'{delete}').
-					'</div>',
-				'dropdown' => true,
-			]
-		];
-	}
-
-	/**
-	 * Проверка на отключение видимости кнопок по умолчанию
-	 * @param DefaultController $controller
-	 * @param array $action
-	 * @return bool
-	 */
-	public static function isDisableButtonVisible(DefaultController $controller, array $action):bool {
-		$reflection = new ReflectionClass($controller);
-		$reflectionProperty = $reflection->getProperty('disabledActions');
-		$reflectionProperty->setAccessible(true);
-
-		return ArrayHelper::isSubset($action, $reflectionProperty->getValue($controller), true);
-	}
 }

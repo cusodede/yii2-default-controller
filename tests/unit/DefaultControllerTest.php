@@ -59,7 +59,7 @@ class DefaultControllerTest extends Unit {
 	public function testConfigureGridColumns():void {
 		/*Колонки никак не сконфигурированы, ожидаем увидеть все по умолчанию*/
 		$controller = new UsersController('users', Yii::$app);
-		self::assertEquals(array_merge(ControllerHelper::getDefaultActionColumn($controller), ['id', 'username', 'login', 'password']), $controller->configureGridColumns());
+		self::assertEquals(array_merge($controller->getDefaultActionColumn(), ['id', 'username', 'login', 'password']), $controller->configureGridColumns());
 		$controller = new VanillaUsersController('vanilla-users', Yii::$app);
 		/*Колонки сконфигурированы в контроллере*/
 		self::assertEquals(['id', 'login:text'], $controller->configureGridColumns());
