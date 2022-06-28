@@ -6,6 +6,7 @@ namespace cusodede\web\default_controller\models;
 use cusodede\web\default_controller\helpers\ControllerHelper;
 use cusodede\web\default_controller\models\actions\EditableFieldAction;
 use Exception;
+use kartik\grid\ActionColumn;
 use pozitronik\helpers\BootstrapHelper;
 use pozitronik\helpers\ControllerHelper as VendorControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
@@ -248,6 +249,7 @@ abstract class DefaultController extends Controller {
 			'controller' => $this,
 			'modelName' => $this->model->formName(),
 			'model' => $this->model,
+			'hasCreateAction' => $this->isActionDisabled(['createAction'])
 		];
 
 		if (Yii::$app->request->isAjax) {
@@ -532,12 +534,39 @@ abstract class DefaultController extends Controller {
 		$result = ArrayHelper::getValue(
 			Yii::$app->components,
 			'default_controller.models.'.$model::class.'.gridColumns',
-			array_merge(ControllerHelper::getDefaultActionColumn(), array_keys($model->attributes))
+			array_merge($this->getDefaultActionColumn(), array_keys($model->attributes))
 		);
 
 		return (is_callable($result))
 			?$result()
 			:$result;
+	}
+
+	/**
+	 * Получение настроек ActionColumn по умолчанию
+	 * @return array[]
+	 */
+	public function getDefaultActionColumn():array {
+		return [
+			[
+				'class' => ActionColumn::class,
+				'template' => '<div class="btn-group">'.
+					($this->isActionDisabled(['actionUpdate', 'actionEdit'])?'':'{update}').
+					($this->isActionDisabled(['actionView'])?'':'{view}').
+					($this->isActionDisabled(['actionDelete'])?'':'{delete}').
+					'</div>',
+				'dropdown' => true,
+			]
+		];
+	}
+
+	/**
+	 *
+	 * @param string[] $action
+	 * @return bool
+	 */
+	private function isActionDisabled(array $action):bool {
+		return ArrayHelper::isSubset($action, $this->disabledActions, true);
 	}
 
 }
