@@ -6,10 +6,10 @@ namespace cusodede\web\default_controller\models;
 use cusodede\web\default_controller\helpers\ControllerHelper;
 use cusodede\web\default_controller\models\actions\EditableFieldAction;
 use Exception;
+use kartik\grid\ActionColumn;
 use pozitronik\helpers\BootstrapHelper;
 use pozitronik\helpers\ControllerHelper as VendorControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
-use pozitronik\traits\traits\ActiveRecordTrait;
 use pozitronik\traits\traits\ControllerTrait;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -42,7 +42,7 @@ use yii\web\Response;
  * @property bool $enablePrototypeMenu Включать ли контроллер в меню списка прототипов. Параметр объявлен устаревшим, и будет убран.
  *
  * @property-read ActiveRecordInterface $searchModel
- * @property-read ActiveRecordInterface|ActiveRecordTrait $model
+ * @property-read ActiveRecordInterface $model
  */
 abstract class DefaultController extends Controller {
 	use ControllerTrait;
@@ -190,7 +190,13 @@ abstract class DefaultController extends Controller {
 	 * @return string|null
 	 */
 	public function getPrimaryKeyName():?string {
-		return static::$_primaryKeyName ??= $this->model::pkName();
+		if (method_exists($this->modelClass, 'pkName')) {//probably, ActiveRecordTrait
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			return static::$_primaryKeyName ??= $this->model::pkName();
+		}
+		//fallback to vanilla ActiveRecord
+		return $this->model::primaryKey()[0]??null;
+
 	}
 
 	/**
@@ -236,12 +242,14 @@ abstract class DefaultController extends Controller {
 		$params = Yii::$app->request->queryParams;
 		$searchModel = $this->getSearchModel();
 
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$viewParams = [
 			'searchModel' => $searchModel,
 			'dataProvider' => $searchModel->search($params),
 			'controller' => $this,
 			'modelName' => $this->model->formName(),
 			'model' => $this->model,
+			'hasCreateAction' => $this->isActionDisabled(['createAction'])
 		];
 
 		if (Yii::$app->request->isAjax) {
@@ -372,7 +380,7 @@ abstract class DefaultController extends Controller {
 				}, $textFields, "%$term%", false])
 				->distinct();
 
-			if ($this->hasMethod($query, 'active')) {
+			if (method_exists($query, 'active')) {
 				$query->active();
 			}
 
@@ -500,6 +508,65 @@ abstract class DefaultController extends Controller {
 	public function initViewTitle(string $title):string {
 		if (null === $this->modelClass || null === $model = $this->model::findOne($this->checkPrimaryKey(false))) return $title;
 		return preg_replace_callback("/\{(\w+)}/", static fn(array $matches) => ArrayHelper::getValue($model, $matches[1], '%undefined%'), $title);
+	}
+
+	/**
+	 * Метод пытается сконфигурировать набор колонок для грида в индексном шаблоне по умолчанию.
+	 * По порядку проверяются:
+	 * - метод gridColumns() в модели,
+	 * - метод gridColumns() в контроллере,
+	 * - конфигурация Yii::$app->components->default_controller->models->{Model::class}->gridColumns
+	 *
+	 * и если ничего из этого не существует, то происходит fallback на отображение всех колонок as is.
+	 *
+	 * @param null|ActiveRecordInterface $model
+	 * @return array
+	 * @throws Exception
+	 */
+	public function configureGridColumns(?ActiveRecordInterface $model = null):array {
+		if (null === $model) $model = $this->model;
+		if (method_exists($model, 'gridColumns') && $result = $model->gridColumns()) {
+			return $result;
+		}
+		if (method_exists($this, 'gridColumns') && $result = $this->gridColumns()) {
+			return $result;
+		}
+		$result = ArrayHelper::getValue(
+			Yii::$app->components,
+			'default_controller.models.'.$model::class.'.gridColumns',
+			array_merge($this->getDefaultActionColumn(), array_keys($model->attributes))
+		);
+
+		return (is_callable($result))
+			?$result()
+			:$result;
+	}
+
+	/**
+	 * Получение настроек ActionColumn по умолчанию
+	 * @return array[]
+	 */
+	public function getDefaultActionColumn():array {
+		return [
+			[
+				'class' => ActionColumn::class,
+				'template' => '<div class="btn-group">'.
+					($this->isActionDisabled(['actionUpdate', 'actionEdit'])?'':'{update}').
+					($this->isActionDisabled(['actionView'])?'':'{view}').
+					($this->isActionDisabled(['actionDelete'])?'':'{delete}').
+					'</div>',
+				'dropdown' => true,
+			]
+		];
+	}
+
+	/**
+	 *
+	 * @param string[] $action
+	 * @return bool
+	 */
+	private function isActionDisabled(array $action):bool {
+		return ArrayHelper::isSubset($action, $this->disabledActions, true);
 	}
 
 }

@@ -1,7 +1,9 @@
 <?php /** @noinspection UsingInclusionReturnValueInspection */
 declare(strict_types = 1);
 
+use app\models\ConfigUsers;
 use app\models\Users;
+use cusodede\web\default_controller\models\DefaultController;
 use yii\caching\DummyCache;
 use yii\log\FileTarget;
 use yii\web\AssetManager;
@@ -25,6 +27,18 @@ $config = [
 		],
 	],
 	'components' => [
+		'default_controller' => [
+			'class' => DefaultController::class,
+			'models' => [
+				ConfigUsers::class => [
+					'gridColumns' => [
+						'id',
+						'username:text',
+						'password:text'
+					]
+				]
+			]
+		],
 		'request' => [
 			'cookieValidationKey' => 'sosijopu',
 		],

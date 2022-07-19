@@ -118,4 +118,5 @@ class ControllerHelper extends VendorControllerHelper {
 		}
 		return $result;
 	}
+
 }
