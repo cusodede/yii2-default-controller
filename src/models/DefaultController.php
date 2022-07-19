@@ -498,7 +498,7 @@ abstract class DefaultController extends Controller {
 	 * @throws BadRequestHttpException
 	 */
 	public function initViewTitle(string $title):string {
-		if (null === $model = $this->model::findOne($this->checkPrimaryKey(false))) return $title;
+		if (null === $this->modelClass || null === $model = $this->model::findOne($this->checkPrimaryKey(false))) return $title;
 		return preg_replace_callback("/\{(\w+)}/", static fn(array $matches) => ArrayHelper::getValue($model, $matches[1], '%undefined%'), $title);
 	}
 
