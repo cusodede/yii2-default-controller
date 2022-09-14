@@ -44,7 +44,7 @@ $id = "{$modelName}-index-grid";
 				'{newRecord}' => Html::a('Новая запись', $controller->link('create'), ['class' => 'btn btn-success'])
 			],
 		),
-		'panelBeforeTemplate' => ($hasCreateAction?'':'{newRecord}').'{toolbarContainer}<div class="clearfix"></div>',
+		'panelBeforeTemplate' => ($hasCreateAction?'{newRecord}':'').'{toolbarContainer}<div class="clearfix"></div>',
 		'summary' => null,
 		'showOnEmpty' => true,
 		'export' => false,

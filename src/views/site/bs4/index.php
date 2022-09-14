@@ -43,7 +43,7 @@ $id = "{$modelName}-index-grid";
 				'{totalCount}' => ($dataProvider->totalCount > 0)?Utils::pluralForm($dataProvider->totalCount, ['запись', 'записи', 'записей']):"Нет записей",
 				'{newRecord}' => Html::a('Новая запись', $controller->link('create'), ['class' => 'btn btn-success'])
 			],
-		'panelBeforeTemplate' => ($hasCreateAction?'':'{newRecord}').'{toolbarContainer}<div class="clearfix"></div>',
+		'panelBeforeTemplate' => ($hasCreateAction?'{newRecord}':'').'{toolbarContainer}<div class="clearfix"></div>',
 		'summary' => null,
 		'showOnEmpty' => true,
 		'export' => false,
