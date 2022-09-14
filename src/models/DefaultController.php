@@ -548,14 +548,15 @@ abstract class DefaultController extends Controller {
 	 * @return array[]
 	 */
 	public function getDefaultActionColumn():array {
-		return [
+		$content = sprintf("%s%s%s",
+			$this->isActionDisabled(['actionUpdate', 'actionEdit'])?'':'{update}',
+			$this->isActionDisabled(['actionView'])?'':'{view}',
+			$this->isActionDisabled(['actionDelete'])?'':'{delete}'
+		);
+		return '' === $content?[]:[
 			[
 				'class' => ActionColumn::class,
-				'template' => '<div class="btn-group">'.
-					($this->isActionDisabled(['actionUpdate', 'actionEdit'])?'':'{update}').
-					($this->isActionDisabled(['actionView'])?'':'{view}').
-					($this->isActionDisabled(['actionDelete'])?'':'{delete}').
-					'</div>',
+				'template' => '<div class="btn-group">'.$content.'</div>',
 				'dropdown' => true,
 			]
 		];
