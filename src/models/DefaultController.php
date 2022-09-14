@@ -190,6 +190,7 @@ abstract class DefaultController extends Controller {
 	 * @return string|null
 	 */
 	public function getPrimaryKeyName():?string {
+		if (null !== static::$_primaryKeyName) return static::$_primaryKeyName;
 		if (method_exists($this->modelClass, 'pkName')) {//probably, ActiveRecordTrait
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			return static::$_primaryKeyName ??= $this->model::pkName();
