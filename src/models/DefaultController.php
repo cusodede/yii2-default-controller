@@ -108,6 +108,14 @@ abstract class DefaultController extends Controller {
 	public bool $enablePrototypeMenu = false;
 
 	/**
+	 * @var array
+	 *
+	 * Массив сценариев применяемых для каждого указанного action
+	 * ['actionView' => 'SCENARIO_NAME', ...]
+	 */
+	public array $scenarios = [];
+
+	/**
 	 * @inheritDoc
 	 */
 	public function behaviors():array {
@@ -268,6 +276,9 @@ abstract class DefaultController extends Controller {
 	 */
 	public function actionCreate() {
 		$model = $this->model;
+		if (isset($this->scenarios[__FUNCTION__])) {
+			$model->setScenario($this->scenarios[__FUNCTION__]);
+		}
 		if (ControllerHelper::IsAjaxValidationRequest()) {
 			return $this->asJson(ControllerHelper::validateModelFromPost($model));
 		}
@@ -306,6 +317,9 @@ abstract class DefaultController extends Controller {
 	 */
 	public function actionEdit() {
 		$model = $this->getModelByPKOrFail($pk = $this->checkPrimaryKey());
+		if (isset($this->scenarios[__FUNCTION__])) {
+			$model->setScenario($this->scenarios[__FUNCTION__]);
+		}
 
 		if (ControllerHelper::IsAjaxValidationRequest()) {
 			return $this->asJson(ControllerHelper::validateModelFromPost($model));
@@ -345,6 +359,9 @@ abstract class DefaultController extends Controller {
 		$model = $this->getModelByPKOrFail($this->checkPrimaryKey());
 
 		if ($model->hasAttribute('deleted')) {
+			if (isset($this->scenarios[__FUNCTION__])) {
+				$model->setScenario($this->scenarios[__FUNCTION__]);
+			}
 			/** @noinspection PhpUndefinedFieldInspection */
 			$model->setAttribute('deleted', !$model->deleted);
 			$model->save();
