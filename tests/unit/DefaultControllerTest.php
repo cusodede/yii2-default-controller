@@ -11,6 +11,7 @@ use app\models\ConfigUsers;
 use app\models\TestUsers;
 use app\models\Users;
 use Codeception\Test\Unit;
+use pozitronik\helpers\ReflectionHelper;
 use Yii;
 use yii\db\Exception;
 use yii\web\BadRequestHttpException;
@@ -21,6 +22,7 @@ use yii\web\BadRequestHttpException;
 class DefaultControllerTest extends Unit {
 
 	/**
+	 * @covers UsersController::actionAjaxSearch
 	 * @return void
 	 */
 	public function testAjaxSearch():void {
@@ -54,6 +56,7 @@ class DefaultControllerTest extends Unit {
 	}
 
 	/**
+	 * @covers UsersController::configureGridColumns
 	 * @return void
 	 */
 	public function testConfigureGridColumns():void {
@@ -73,6 +76,7 @@ class DefaultControllerTest extends Unit {
 	}
 
 	/**
+	 * @covers UsersController::initViewTitle
 	 * @return void
 	 * @throws Exception
 	 * @throws BadRequestHttpException
@@ -90,6 +94,26 @@ class DefaultControllerTest extends Unit {
 
 		$emptyController = new EmptyController('empty', Yii::$app);
 		$this->assertEquals('Просмотр: {username}', $emptyController->initViewTitle('Просмотр: {username}'));
+	}
+
+	/**
+	 * @covers UsersController::applyActionScenario
+	 * @return void
+	 * @throws Exception
+	 */
+	public function testActionScenario():void {
+		$user = Users::CreateUser()->saveAndReturn();
+		$user->username = "user_1";
+		$user->login = "i1";
+		$user->save();
+		$usersController = new UsersController('users', Yii::$app);
+		$usersController->scenarios = ['actionEdit' => 'onEditScenario'];
+
+		$applyActionScenarioMethod = ReflectionHelper::setAccessible($usersController, 'applyActionScenario', false);
+		static::assertNotNull($applyActionScenarioMethod);
+
+		$applyActionScenarioMethod->invoke($usersController, $user, 'actionEdit');
+		static::assertEquals($user->scenario, 'onEditScenario');
 	}
 
 }
