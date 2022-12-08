@@ -108,9 +108,9 @@ abstract class DefaultController extends Controller {
 	public bool $enablePrototypeMenu = false;
 
 	/**
-	 * @var array
+	 * @var string[]
 	 *
-	 * Массив сценариев применяемых для каждого указанного action
+	 * Массив сценариев применяемых для каждого указанного action,
 	 * ['actionView' => 'SCENARIO_NAME', ...]
 	 */
 	public array $scenarios = [];
@@ -276,9 +276,7 @@ abstract class DefaultController extends Controller {
 	 */
 	public function actionCreate() {
 		$model = $this->model;
-		if (isset($this->scenarios[__FUNCTION__])) {
-			$model->setScenario($this->scenarios[__FUNCTION__]);
-		}
+		$this->applyActionScenario($model, __FUNCTION__);
 		if (ControllerHelper::IsAjaxValidationRequest()) {
 			return $this->asJson(ControllerHelper::validateModelFromPost($model));
 		}
@@ -317,9 +315,7 @@ abstract class DefaultController extends Controller {
 	 */
 	public function actionEdit() {
 		$model = $this->getModelByPKOrFail($pk = $this->checkPrimaryKey());
-		if (isset($this->scenarios[__FUNCTION__])) {
-			$model->setScenario($this->scenarios[__FUNCTION__]);
-		}
+		$this->applyActionScenario($model, __FUNCTION__);
 
 		if (ControllerHelper::IsAjaxValidationRequest()) {
 			return $this->asJson(ControllerHelper::validateModelFromPost($model));
@@ -359,9 +355,7 @@ abstract class DefaultController extends Controller {
 		$model = $this->getModelByPKOrFail($this->checkPrimaryKey());
 
 		if ($model->hasAttribute('deleted')) {
-			if (isset($this->scenarios[__FUNCTION__])) {
-				$model->setScenario($this->scenarios[__FUNCTION__]);
-			}
+			$this->applyActionScenario($model, __FUNCTION__);
 			/** @noinspection PhpUndefinedFieldInspection */
 			$model->setAttribute('deleted', !$model->deleted);
 			$model->save();
@@ -586,6 +580,19 @@ abstract class DefaultController extends Controller {
 	 */
 	private function isActionDisabled(array $action):bool {
 		return ArrayHelper::isSubset($action, $this->disabledActions, true);
+	}
+
+	/**
+	 * Applies the scenario to the model, if defined
+	 * @param ActiveRecordInterface $model
+	 * @param string $methodName
+	 * @return void
+	 * @throws Exception
+	 */
+	private function applyActionScenario(ActiveRecordInterface $model, string $methodName):void {
+		if (null !== $scenario = ArrayHelper::getValue($this->scenarios, $methodName)) {
+			$model->setScenario($scenario);
+		}
 	}
 
 }
