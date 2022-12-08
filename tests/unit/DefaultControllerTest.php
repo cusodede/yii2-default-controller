@@ -103,9 +103,6 @@ class DefaultControllerTest extends Unit {
 	 */
 	public function testActionScenario():void {
 		$user = Users::CreateUser()->saveAndReturn();
-		$user->username = "user_1";
-		$user->login = "i1";
-		$user->save();
 		$usersController = new UsersController('users', Yii::$app);
 		$usersController->scenarios = ['actionEdit' => 'onEditScenario'];
 
@@ -114,6 +111,10 @@ class DefaultControllerTest extends Unit {
 
 		$applyActionScenarioMethod->invoke($usersController, $user, 'actionEdit');
 		static::assertEquals($user->scenario, 'onEditScenario');
+
+		$user = Users::CreateUser()->saveAndReturn();
+		$applyActionScenarioMethod->invoke($usersController, $user, 'actionDelete');
+		static::assertEquals($user->scenario, 'default');
 	}
 
 }
