@@ -1,4 +1,7 @@
 * text=auto eol=lf
+
+/.idea                      export-ignore
+/.gitignore                 export-ignore
 /.editorconfig              export-ignore
 /.gitattributes             export-ignore
 /codeception.yml            export-ignore
