@@ -324,7 +324,7 @@ abstract class DefaultController extends Controller {
 		$posting = ControllerHelper::createModelFromPost($model, $errors);
 
 		if (true === $posting) {/* Модель была успешно прогружена */
-			return ('index' === $redirectAction = static::getAfterCreateAction())
+			return ('index' === $redirectAction = static::getAfterUpdateAction())
 				?$this->redirect(Url::toRoute($redirectAction))/*При редиректе на index get-параметры стоит спрятать*/
 				:$this->redirect(Url::toRoute([$redirectAction, $this->getPrimaryKeyName() => $pk]));
 		}
