@@ -2,6 +2,8 @@ name: CI with PostgreSQL
 on:
   pull_request:
     branches: [ master ]
+  push:
+    branches: [ master ]
 
 env:
   COMPOSE_PROJECT_NAME: yii2-s3-module
