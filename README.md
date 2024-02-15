@@ -1,6 +1,6 @@
 # yii2-default-controller
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cusodede/yii2-default-controller/CI%20with%20PostgreSQL)
+[![Build Status](https://github.com/cusodede/yii2-default-controller/actions/workflows/ci_with_postgresql.yml/badge.svg)](https://github.com/cusodede/yii2-default-controller/actions)
 
 Компонент, расширяющий функционал и удобство использования web-контроллеров Yii2.
 
