@@ -1,18 +1,21 @@
-build:
-	@cp -nfr .env.example .env
+help:			## Display help information.
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+
+build:			## Build an image from a docker-compose file. Params: {{ v=8.1 }}. Default latest PHP 8.1
 	@cp -nfr ./tests/.env.example ./tests/.env
-	PHP_VERSION=$(filter-out $@,$(v)) docker-compose -f tests/docker-compose.yml up -d --build
+	PHP_VERSION=$(filter-out $@,$(v)) docker-compose -f tests/docker/docker-compose.yml up -d --build
 
-test:
-	PHP_VERSION=$(filter-out $@,$(v)) docker-compose -f tests/docker-compose.yml build --pull yii2-default-controller
-	PHP_VERSION=$(filter-out $@,$(v)) docker-compose-f tests/docker-compose.yml run yii2-default-controller vendor/bin/codecept run -v --debug
-	docker-compose -f tests/docker-compose.yml down
+down:			## Stop and remove containers, networks
+	docker-compose -f tests/docker/docker-compose.yml down
 
-clean:
-	docker-compose down
-	rm -rf tests/runtime/*
-	rm -rf composer.lock
-	rm -rf vendor/
+start:			## Start services
+	docker-compose -f tests/docker/docker-compose.yml up -d
 
-clean-all: clean
-	rm -rf tests/runtime/.composer*
+sh:			## Enter the container with the application
+	docker exec -it yii2-cache-bridge-php sh
+
+test:			## Run tests. Params: {{ v=8.1 }}. Default latest PHP 8.1
+	PHP_VERSION=$(filter-out $@,$(v)) docker-compose -f tests/docker/docker-compose.yml build --pull yii2-cache-bridge-php
+	make create-cluster
+	PHP_VERSION=$(filter-out $@,$(v)) docker-compose -f tests/docker/docker-compose.yml run yii2-cache-bridge-php vendor/bin/codecept run
+	make down

@@ -1,5 +1,4 @@
 ---
-version: "3.8"
 
 services:
 
@@ -12,8 +11,8 @@ services:
       args:
         PHP_VERSION: ${PHP_VERSION:-8.1}
     volumes:
-      - ./runtime/.composer:/root/.composer
-      - ..:/var/www
+      - ../runtime/.composer:/root/.composer
+      - ../..:/var/www
     dns:
       - 8.8.8.8
       - 4.4.4.4
@@ -23,8 +22,6 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: yii2-default-controller
       COMPOSER_ALLOW_SUPERUSER: 1
-    env_file:
-      - .env
     depends_on:
       - postgres
     networks: &php_networks
