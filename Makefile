@@ -15,6 +15,6 @@ sh:			## Enter the container with the application
 	docker exec -it yii2-default-controller sh
 
 test:			## Run tests. Params: {{ v=8.1 }}. Default latest PHP 8.1
-	PHP_VERSION=$(filter-out $@,$(v)) docker compose -f tests/docker/docker-compose.yml build --pull yii2-default-controller
-	PHP_VERSION=$(filter-out $@,$(v)) docker compose -f tests/docker/docker-compose.yml run yii2-default-controller vendor/bin/codecept run
+	PHP_VERSION=$(filter-out $@,$(v)) docker compose -f tests/docker/docker-compose.yml build --pull yii2-default-controller-php
+	PHP_VERSION=$(filter-out $@,$(v)) docker compose -f tests/docker/docker-compose.yml run yii2-default-controller-php vendor/bin/codecept run
 	make down

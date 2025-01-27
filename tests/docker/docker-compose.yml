@@ -2,7 +2,7 @@
 
 services:
 
-  php:
+  yii2-default-controller-php:
     container_name: yii2-default-controller
     hostname: yii2-default-controller
     build:
