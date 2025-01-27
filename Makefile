@@ -1,18 +1,11 @@
 build:
 	@cp -nfr .env.example .env
 	@cp -nfr ./tests/.env.example ./tests/.env
-	docker-compose pull
-	docker-compose build --pull
+	PHP_VERSION=$(filter-out $@,$(v)) docker-compose up -d --build
 
-test: test80 test81
-test80:
-	docker-compose build --pull php80
-	docker-compose run php80 vendor/bin/codecept run -v --debug
-	docker-compose down
-
-test81:
-	docker-compose build --pull php81
-	docker-compose run php81 vendor/bin/codecept run -v --debug
+test:
+	PHP_VERSION=$(filter-out $@,$(v)) docker-compose build --pull yii2-default-controller
+	PHP_VERSION=$(filter-out $@,$(v)) docker-compose run yii2-default-controller vendor/bin/codecept run -v --debug
 	docker-compose down
 
 clean:

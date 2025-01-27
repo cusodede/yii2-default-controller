@@ -1,9 +1,13 @@
-name: CI with PostgreSQL
+name: Run tests
 on:
   pull_request:
     branches: [ master ]
+    paths-ignore:
+      - 'README.md'
   push:
     branches: [ master ]
+    paths-ignore:
+      - 'README.md'
 
 jobs:
   phpunit:
@@ -12,13 +16,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ 80, 81 ]
+        php: [ '8.1' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Build
-        run: make build
+        run: make build v=${{ matrix.php }}
 
       - name: PHP Codeception tests for PHP ${{ matrix.php }}
-        run: make test${{ matrix.php }}
+        run: make test v=${{ matrix.php }}
