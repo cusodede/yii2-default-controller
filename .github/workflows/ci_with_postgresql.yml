@@ -1,27 +1,27 @@
-name: CI with PostgreSQL
+name: Run tests
 on:
   pull_request:
     branches: [ master ]
+    paths-ignore:
+      - 'README.md'
   push:
     branches: [ master ]
+    paths-ignore:
+      - 'README.md'
 
-env:
-  COMPOSE_PROJECT_NAME: yii2-s3-module
-  COMPOSE_FILE: tests/docker-compose.yml
 jobs:
-  phpunit:
+  codeception:
     name: PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php: [ 80, 81 ]
+        php: [ '8.1' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build
-        run: make build
-
       - name: PHP Codeception tests for PHP ${{ matrix.php }}
-        run: make test${{ matrix.php }}
+        run: |
+          make build v=${{ matrix.php }}
+          make test v=${{ matrix.php }}

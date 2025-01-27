@@ -1,25 +1,20 @@
-build:
-	@cp -nfr .env.example .env
+help:			## Display help information.
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+
+build:			## Build an image from a docker-compose file. Params: {{ v=8.1 }}. Default latest PHP 8.1
 	@cp -nfr ./tests/.env.example ./tests/.env
-	docker-compose pull
-	docker-compose build --pull
+	PHP_VERSION=$(filter-out $@,$(v)) docker compose -f tests/docker/docker-compose.yml up -d --build
 
-test: test80 test81
-test80:
-	docker-compose build --pull php80
-	docker-compose run php80 vendor/bin/codecept run -v --debug
-	docker-compose down
+down:			## Stop and remove containers, networks
+	docker compose -f tests/docker/docker-compose.yml down
 
-test81:
-	docker-compose build --pull php81
-	docker-compose run php81 vendor/bin/codecept run -v --debug
-	docker-compose down
+start:			## Start services
+	docker compose -f tests/docker/docker-compose.yml up -d
 
-clean:
-	docker-compose down
-	rm -rf tests/runtime/*
-	rm -rf composer.lock
-	rm -rf vendor/
+sh:			## Enter the container with the application
+	docker exec -it yii2-default-controller sh
 
-clean-all: clean
-	rm -rf tests/runtime/.composer*
+test:			## Run tests. Params: {{ v=8.1 }}. Default latest PHP 8.1
+	PHP_VERSION=$(filter-out $@,$(v)) docker compose -f tests/docker/docker-compose.yml build --pull yii2-default-controller-php
+	PHP_VERSION=$(filter-out $@,$(v)) docker compose -f tests/docker/docker-compose.yml run yii2-default-controller-php vendor/bin/codecept run
+	make down
