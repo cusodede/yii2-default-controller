@@ -9,4 +9,3 @@
 /docker                     export-ignore
 /.github                    export-ignore
 /docker-compose.yml         export-ignore
-/.env.example               export-ignore

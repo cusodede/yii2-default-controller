@@ -10,7 +10,7 @@ on:
       - 'README.md'
 
 jobs:
-  phpunit:
+  codeception:
     name: PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
     strategy:
@@ -21,8 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build
-        run: make build v=${{ matrix.php }}
-
       - name: PHP Codeception tests for PHP ${{ matrix.php }}
-        run: make test v=${{ matrix.php }}
+        run: |
+          make build v=${{ matrix.php }}
+          make test v=${{ matrix.php }}
