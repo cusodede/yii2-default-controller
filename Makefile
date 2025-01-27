@@ -1,12 +1,12 @@
 build:
 	@cp -nfr .env.example .env
 	@cp -nfr ./tests/.env.example ./tests/.env
-	PHP_VERSION=$(filter-out $@,$(v)) docker-compose up -d --build
+	PHP_VERSION=$(filter-out $@,$(v)) docker-compose -f tests/docker-compose.yml up -d --build
 
 test:
-	PHP_VERSION=$(filter-out $@,$(v)) docker-compose build --pull yii2-default-controller
-	PHP_VERSION=$(filter-out $@,$(v)) docker-compose run yii2-default-controller vendor/bin/codecept run -v --debug
-	docker-compose down
+	PHP_VERSION=$(filter-out $@,$(v)) docker-compose -f tests/docker-compose.yml build --pull yii2-default-controller
+	PHP_VERSION=$(filter-out $@,$(v)) docker-compose-f tests/docker-compose.yml run yii2-default-controller vendor/bin/codecept run -v --debug
+	docker-compose -f tests/docker-compose.yml down
 
 clean:
 	docker-compose down
