@@ -17,9 +17,8 @@ class DefaultControllerWorkflowCest {
 
 	/**
 	 * Set up test environment before each test
-	 * @param FunctionalTester $I
 	 */
-	public function _before(FunctionalTester $I): void {
+	public function _before(): void {
 		// Clean up any existing test data
 		Users::deleteAll(['like', 'username', 'workflow_']);
 		VanillaUsers::deleteAll(['like', 'username', 'workflow_']);
@@ -27,9 +26,8 @@ class DefaultControllerWorkflowCest {
 
 	/**
 	 * Clean up after each test
-	 * @param FunctionalTester $I
 	 */
-	public function _after(FunctionalTester $I): void {
+	public function _after(): void {
 		Users::deleteAll(['like', 'username', 'workflow_']);
 		VanillaUsers::deleteAll(['like', 'username', 'workflow_']);
 	}

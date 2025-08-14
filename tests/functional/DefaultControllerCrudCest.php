@@ -16,9 +16,8 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Set up test environment before each test
-	 * @param FunctionalTester $I
 	 */
-	public function _before(FunctionalTester $I): void {
+	public function _before(): void {
 		// Clean up any existing test data
 		Users::deleteAll(['like', 'username', 'test_']);
 		Users::deleteAll(['like', 'username', 'crud_']);
@@ -27,9 +26,8 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Clean up after each test
-	 * @param FunctionalTester $I
 	 */
-	public function _after(FunctionalTester $I): void {
+	public function _after(): void {
 		// Additional cleanup if needed
 		Users::deleteAll(['like', 'username', 'test_']);
 		Users::deleteAll(['like', 'username', 'crud_']);

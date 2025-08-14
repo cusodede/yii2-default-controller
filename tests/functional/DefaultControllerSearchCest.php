@@ -16,9 +16,8 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Set up test environment before each test
-	 * @param FunctionalTester $I
 	 */
-	public function _before(FunctionalTester $I): void {
+	public function _before(): void {
 		// Clean up any existing test data
 		Users::deleteAll(['like', 'username', 'search_']);
 		Users::deleteAll(['like', 'username', 'filter_']);
@@ -27,9 +26,8 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Clean up after each test
-	 * @param FunctionalTester $I
 	 */
-	public function _after(FunctionalTester $I): void {
+	public function _after(): void {
 		Users::deleteAll(['like', 'username', 'search_']);
 		Users::deleteAll(['like', 'username', 'filter_']);
 		Users::deleteAll(['like', 'username', 'sort_']);
