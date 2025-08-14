@@ -494,11 +494,11 @@ class DefaultControllerAjaxCest {
 			try {
 				$I->seeResponseCodeIs(200);
 				return true;
-			} catch (Exception $e) {
+			} catch (Exception) {
 				try {
 					$I->seeResponseCodeIs(302);
 					return true;
-				} catch (Exception $e2) {
+				} catch (Exception) {
 					return false;
 				}
 			}

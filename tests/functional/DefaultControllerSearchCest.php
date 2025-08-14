@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 use app\models\Users;
 use Codeception\Exception\ModuleException;
+use yii\db\Exception as ExceptionAlias;
 
 /**
  * Comprehensive functional tests for DefaultController search and filtering
@@ -44,7 +45,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testBasicSearchFunctionality(FunctionalTester $I): void {
 		// Arrange: Create test users with searchable data
@@ -87,7 +88,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testSearchWithMultipleCriteria(FunctionalTester $I): void {
 		// Arrange: Create diverse test data
@@ -131,7 +132,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testCaseInsensitiveSearch(FunctionalTester $I): void {
 		// Arrange
@@ -174,7 +175,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testPartialStringSearch(FunctionalTester $I): void {
 		// Arrange
@@ -216,7 +217,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testSearchWithSpecialCharacters(FunctionalTester $I): void {
 		// Arrange
@@ -266,7 +267,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testEmptySearchResults(FunctionalTester $I): void {
 		// Arrange
@@ -306,7 +307,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testSortingByDifferentColumns(FunctionalTester $I): void {
 		// Arrange: Create users with sortable data
@@ -366,7 +367,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testSortingWithSearchFilters(FunctionalTester $I): void {
 		// Arrange
@@ -417,7 +418,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testPaginationWithLargeDataset(FunctionalTester $I): void {
 		// Arrange: Create enough users to trigger pagination
@@ -459,7 +460,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testPaginationWithSearchFilters(FunctionalTester $I): void {
 		// Arrange: Create mixed dataset
@@ -511,7 +512,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testAdvancedFilteringCapabilities(FunctionalTester $I): void {
 		// Arrange
@@ -555,7 +556,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testFilterPersistenceAcrossNavigation(FunctionalTester $I): void {
 		// Arrange
@@ -607,13 +608,13 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testSearchPerformanceWithLargeDataset(FunctionalTester $I): void {
 		// Arrange: Create substantial dataset
 		$authUser = Users::CreateUser()->saveAndReturn();
 		
-		$startTime = microtime(true);
+		$setupStartTime = microtime(true);
 		
 		for ($i = 1; $i <= 100; $i++) {
 			$user = Users::CreateUser();
@@ -622,6 +623,9 @@ class DefaultControllerSearchCest {
 			$user->password = 'test_password';
 			$user->saveAndReturn();
 		}
+		
+		$setupEndTime = microtime(true);
+		$setupDuration = $setupEndTime - $setupStartTime;
 		
 		// Act: Perform search on large dataset
 		$searchStartTime = microtime(true);
@@ -637,8 +641,9 @@ class DefaultControllerSearchCest {
 		$I->seeResponseCodeIs(200);
 		$I->see('search_performance_user_001');
 		
-		// Performance assertion - search should complete within reasonable time
+		// Performance assertions - both setup and search should complete within reasonable time
 		$searchDuration = $searchEndTime - $searchStartTime;
+		$I->assertLessThan(10.0, $setupDuration, 'Data setup should complete within 10 seconds');
 		$I->assertLessThan(5.0, $searchDuration, 'Search should complete within 5 seconds');
 	}
 
@@ -650,7 +655,7 @@ class DefaultControllerSearchCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testSearchSqlInjectionPrevention(FunctionalTester $I): void {
 		// Arrange

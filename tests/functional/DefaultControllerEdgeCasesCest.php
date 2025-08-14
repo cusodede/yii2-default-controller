@@ -205,7 +205,7 @@ class DefaultControllerEdgeCasesCest {
 			]
 		];
 		
-		foreach ($unicodeTestCases as $index => $testData) {
+		foreach ($unicodeTestCases as $testData) {
 			// Act: Create user with Unicode data
 			$I->amOnRoute('users/create');
 			$I->submitForm('form', ['Users' => $testData]);
