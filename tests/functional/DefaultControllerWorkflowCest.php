@@ -198,7 +198,7 @@ class DefaultControllerWorkflowCest {
 		
 		// STEP 5: Verify batch updates
 		$I->amOnRoute('users/index');
-		for ($i = 0; $i < count($createdUserIds); $i++) {
+		for ($i = 0, $iMax = count($createdUserIds); $i < $iMax; $i++) {
 			$I->see("workflow_updated_employee_{$i}");
 		}
 		
