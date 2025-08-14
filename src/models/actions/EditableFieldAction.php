@@ -42,7 +42,7 @@ class EditableFieldAction extends Action {
 			call_user_func($this->checkAccess, $this->id, $model);
 		}
 
-		$model->scenario = $this->scenario;
+		$model->setScenario($this->scenario);
 
 		if ($model->load(Yii::$app->request->post()) && !$model->save()) {
 			$result = ['output' => '', 'message' => ControllerHelper::Errors2String($model->getErrors(), '<br>')];
