@@ -25,7 +25,7 @@ class UsersCest {
 		$I->amLoggedInAs($user);
 		$I->amOnRoute('users/create');
 		$I->seeResponseCodeIs(200);
-		$I->submitForm("#users-create", [
+		$I->submitForm("form", [
 			'Users' => [
 				'username' => 'Test Successful',
 				'login' => 'test_user_2',
@@ -70,7 +70,7 @@ class UsersCest {
 		$I->amLoggedInAs($user);
 		$I->amOnRoute('vanilla-users/create');
 		$I->seeResponseCodeIs(200);
-		$I->submitForm("#users-create", [
+		$I->submitForm("form", [
 			'VanillaUsers' => [
 				'username' => 'Test Successful',
 				'login' => 'test_user_3',
