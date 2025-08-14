@@ -8,8 +8,11 @@ use app\models\Users;
 use Codeception\Test\Unit;
 use Throwable;
 use Yii;
+use yii\db\Exception;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use app\models\UsersSearch;
 
 /**
  * Simplified test suite for DefaultController CRUD actions
@@ -20,9 +23,9 @@ use yii\web\NotFoundHttpException;
 class DefaultControllerCrudActionsTestSimplified extends Unit {
 
 	/**
-	 * @var UsersController Test controller instance
+	 * @var UsersController|null Test controller instance
 	 */
-	private UsersController $controller;
+	private ?UsersController $controller = null;
 
 	/**
 	 * Set up test environment before each test
@@ -57,8 +60,8 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 
 		$result = $this->controller->actionView();
 		
-		$this->assertIsString($result);
-		$this->assertStringContainsString($user->username, $result);
+		static::assertIsString($result);
+		static::assertStringContainsString($user->username, $result);
 	}
 
 	/**
@@ -102,11 +105,11 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 		$result = $this->controller->actionDelete();
 		
 		// Should return a Response object (redirect)
-		$this->assertInstanceOf(\yii\web\Response::class, $result);
+		static::assertInstanceOf(Response::class, $result);
 		
 		// Verify user was deleted
 		$deletedUser = Users::findOne($userId);
-		$this->assertNull($deletedUser);
+		static::assertNull($deletedUser);
 	}
 
 	/**
@@ -141,10 +144,10 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 	 */
 	public function testModelHandling(): void {
 		$model = $this->controller->getModel();
-		$this->assertInstanceOf(Users::class, $model);
+		static::assertInstanceOf(Users::class, $model);
 		
 		$searchModel = $this->controller->getSearchModel();
-		$this->assertInstanceOf('app\models\UsersSearch', $searchModel);
+		static::assertInstanceOf(UsersSearch::class, $searchModel);
 	}
 
 	/**
@@ -152,7 +155,7 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 	 */
 	public function testPrimaryKeyHandling(): void {
 		$pkName = $this->controller->getPrimaryKeyName();
-		$this->assertEquals('id', $pkName);
+		static::assertEquals('id', $pkName);
 	}
 
 	// =========================================================================================
@@ -164,10 +167,10 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 	 */
 	public function testControllerUtilities(): void {
 		$title = UsersController::Title();
-		$this->assertEquals('Сотрудники', $title);
+		static::assertEquals('Сотрудники', $title);
 		
 		$viewPath = UsersController::ViewPath();
-		$this->assertStringContainsString('cusodede/web/default_controller/views/site', $viewPath);
+		static::assertStringContainsString('cusodede/web/default_controller/views/site', $viewPath);
 	}
 
 	/**
@@ -175,14 +178,14 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 	 */
 	public function testGridConfiguration(): void {
 		$columns = $this->controller->configureGridColumns();
-		$this->assertIsArray($columns);
-		$this->assertNotEmpty($columns);
+		static::assertIsArray($columns);
+		static::assertNotEmpty($columns);
 		
 		// Should contain action column and model attributes
-		$this->assertContains('id', $columns);
-		$this->assertContains('username', $columns);
-		$this->assertContains('login', $columns);
-		$this->assertContains('password', $columns);
+		static::assertContains('id', $columns);
+		static::assertContains('username', $columns);
+		static::assertContains('login', $columns);
+		static::assertContains('password', $columns);
 	}
 
 	/**
@@ -190,12 +193,12 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 	 */
 	public function testDefaultActionColumn(): void {
 		$actionColumn = $this->controller->getDefaultActionColumn();
-		$this->assertIsArray($actionColumn);
-		$this->assertNotEmpty($actionColumn);
+		static::assertIsArray($actionColumn);
+		static::assertNotEmpty($actionColumn);
 		
 		// Should contain ActionColumn configuration
-		$this->assertArrayHasKey('class', $actionColumn[0]);
-		$this->assertStringContainsString('ActionColumn', $actionColumn[0]['class']);
+		static::assertArrayHasKey('class', $actionColumn[0]);
+		static::assertStringContainsString('ActionColumn', $actionColumn[0]['class']);
 	}
 
 	// =========================================================================================
@@ -219,9 +222,9 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 
 		$result = $this->controller->actionAjaxSearch('search_user', 'username');
 		
-		$this->assertIsArray($result);
-		$this->assertArrayHasKey('results', $result);
-		$this->assertCount(5, $result['results']);
+		static::assertIsArray($result);
+		static::assertArrayHasKey('results', $result);
+		static::assertCount(5, $result['results']);
 	}
 
 	/**
@@ -233,9 +236,9 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 	public function testAjaxSearchWithEmptyTerm(): void {
 		$result = $this->controller->actionAjaxSearch(null, 'username');
 		
-		$this->assertIsArray($result);
-		$this->assertArrayHasKey('results', $result);
-		$this->assertEmpty($result['results']['id']);
+		static::assertIsArray($result);
+		static::assertArrayHasKey('results', $result);
+		static::assertEmpty($result['results']['id']);
 	}
 
 	/**
@@ -252,9 +255,9 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 		$result1 = $this->controller->actionAjaxSearch('case', 'username');
 		$result2 = $this->controller->actionAjaxSearch('CASE', 'username');
 		
-		$this->assertCount(1, $result1['results']);
-		$this->assertCount(1, $result2['results']);
-		$this->assertEquals($result1['results'], $result2['results']);
+		static::assertCount(1, $result1['results']);
+		static::assertCount(1, $result2['results']);
+		static::assertEquals($result1['results'], $result2['results']);
 	}
 
 	// =========================================================================================
@@ -272,9 +275,9 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 
 		$result = $this->controller->actionAjaxSearch('special', 'username');
 		
-		$this->assertIsArray($result);
-		$this->assertArrayHasKey('results', $result);
-		$this->assertCount(1, $result['results']);
+		static::assertIsArray($result);
+		static::assertArrayHasKey('results', $result);
+		static::assertCount(1, $result['results']);
 	}
 
 	/**
@@ -289,9 +292,9 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 
 		$result = $this->controller->actionAjaxSearch('multi', 'username,login');
 		
-		$this->assertIsArray($result);
-		$this->assertArrayHasKey('results', $result);
-		$this->assertCount(2, $result['results']); // Should find in both username and login
+		static::assertIsArray($result);
+		static::assertArrayHasKey('results', $result);
+		static::assertCount(2, $result['results']); // Should find in both username and login
 	}
 
 	/**
@@ -311,8 +314,8 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 		$endTime = microtime(true);
 
 		// Should complete within reasonable time
-		$this->assertLessThan(2.0, $endTime - $startTime);
-		$this->assertCount(50, $result['results']);
+		static::assertLessThan(2.0, $endTime - $startTime);
+		static::assertCount(50, $result['results']);
 	}
 
 	// =========================================================================================
@@ -321,7 +324,7 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 
 	/**
 	 * Test view title initialization
-	 * @throws \yii\db\Exception
+	 * @throws Exception
 	 * @throws BadRequestHttpException
 	 */
 	public function testInitViewTitle(): void {
@@ -332,12 +335,12 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 		$_GET['id'] = $user->id;
 		
 		$title = $this->controller->initViewTitle('User: {username}');
-		$this->assertEquals('User: title_test_user', $title);
+		static::assertEquals('User: title_test_user', $title);
 	}
 
 	/**
 	 * Test view title with non-existent variable
-	 * @throws \yii\db\Exception
+	 * @throws Exception
 	 * @throws BadRequestHttpException
 	 */
 	public function testInitViewTitleWithNonExistentVariable(): void {
@@ -345,6 +348,6 @@ class DefaultControllerCrudActionsTestSimplified extends Unit {
 		$_GET['id'] = $user->id;
 		
 		$title = $this->controller->initViewTitle('User: {nonexistent}');
-		$this->assertEquals('User: %undefined%', $title);
+		static::assertEquals('User: %undefined%', $title);
 	}
 }

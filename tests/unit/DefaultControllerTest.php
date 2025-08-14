@@ -12,7 +12,10 @@ use app\models\TestUsers;
 use app\models\Users;
 use Codeception\Test\Unit;
 use pozitronik\helpers\ReflectionHelper;
+use ReflectionException;
+use Throwable;
 use Yii;
+use yii\base\UnknownClassException;
 use yii\db\Exception;
 use yii\web\BadRequestHttpException;
 
@@ -24,6 +27,8 @@ class DefaultControllerTest extends Unit {
 	/**
 	 * @covers UsersController::actionAjaxSearch
 	 * @return void
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	public function testAjaxSearch():void {
 		for ($i = 0; $i < 100; $i++) {
@@ -58,6 +63,7 @@ class DefaultControllerTest extends Unit {
 	/**
 	 * @covers UsersController::configureGridColumns
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function testConfigureGridColumns():void {
 		/*Колонки никак не сконфигурированы, ожидаем увидеть все по умолчанию*/
@@ -90,16 +96,18 @@ class DefaultControllerTest extends Unit {
 		}
 		$usersController = new UsersController('users', Yii::$app);
 		$_GET['id'] = 1;
-		$this->assertEquals('Просмотр: user_1', $usersController->initViewTitle('Просмотр: {username}'));
+		static::assertEquals('Просмотр: user_1', $usersController->initViewTitle('Просмотр: {username}'));
 
 		$emptyController = new EmptyController('empty', Yii::$app);
-		$this->assertEquals('Просмотр: {username}', $emptyController->initViewTitle('Просмотр: {username}'));
+		static::assertEquals('Просмотр: {username}', $emptyController->initViewTitle('Просмотр: {username}'));
 	}
 
 	/**
 	 * @covers UsersController::applyActionScenario
 	 * @return void
 	 * @throws Exception
+	 * @throws ReflectionException
+	 * @throws UnknownClassException
 	 */
 	public function testActionScenario():void {
 		$user = Users::CreateUser()->saveAndReturn();

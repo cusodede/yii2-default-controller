@@ -6,9 +6,7 @@ namespace unit;
 use app\models\Users;
 use Codeception\Test\Unit;
 use cusodede\web\default_controller\helpers\ControllerHelper;
-use Exception;
 use Throwable;
-use Yii;
 use yii\db\Exception as DbException;
 
 /**
@@ -21,13 +19,13 @@ class ControllerHelperTest extends Unit {
 
 	/**
 	 * Test user instance for testing
-	 * @var Users
+	 * @var Users|null
 	 */
-	private Users $testUser;
+	private ?Users $testUser = null;
 
 	/**
 	 * Set up test environment before each test
-	 * @throws \yii\db\Exception
+	 * @throws DbException
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -60,12 +58,12 @@ class ControllerHelperTest extends Unit {
 		// Test with default separator (newline)
 		$result = ControllerHelper::Errors2String($errors);
 		$expected = "username: Username cannot be blank\nemail: Email is not a valid email address";
-		$this->assertEquals($expected, $result);
+		static::assertEquals($expected, $result);
 
 		// Test with custom separator
 		$result = ControllerHelper::Errors2String($errors, '<br>');
 		$expected = "username: Username cannot be blank<br>email: Email is not a valid email address";
-		$this->assertEquals($expected, $result);
+		static::assertEquals($expected, $result);
 	}
 
 	/**
@@ -85,7 +83,7 @@ class ControllerHelperTest extends Unit {
 		// Test with separator for array elements
 		$result = ControllerHelper::Errors2String($errors, ' | ');
 		$expected = "password: Password cannot be blank | Password must be at least 6 characters | email: Email is required";
-		$this->assertEquals($expected, $result);
+		static::assertEquals($expected, $result);
 	}
 
 	/**
@@ -95,7 +93,7 @@ class ControllerHelperTest extends Unit {
 	 */
 	public function testErrors2StringWithEmptyErrors(): void {
 		$result = ControllerHelper::Errors2String([]);
-		$this->assertEquals('', $result);
+		static::assertEquals('', $result);
 	}
 
 	/**
@@ -111,7 +109,7 @@ class ControllerHelperTest extends Unit {
 
 		$result = ControllerHelper::Errors2String($errors, '<br/>');
 		$expected = "field1: Error 1<br/>field2: Error 2";
-		$this->assertEquals($expected, $result);
+		static::assertEquals($expected, $result);
 	}
 
 	// =========================================================================================
@@ -125,7 +123,7 @@ class ControllerHelperTest extends Unit {
 	 */
 	public function testGetModelPKName(): void {
 		$pkName = ControllerHelper::getModelPKName($this->testUser);
-		$this->assertEquals('id', $pkName);
+		static::assertEquals('id', $pkName);
 	}
 
 	/**
@@ -135,8 +133,8 @@ class ControllerHelperTest extends Unit {
 	 */
 	public function testGetModelPKValue(): void {
 		$pkValue = ControllerHelper::getModelPKValue($this->testUser);
-		$this->assertEquals($this->testUser->id, $pkValue);
-		$this->assertIsInt($pkValue);
+		static::assertEquals($this->testUser->id, $pkValue);
+		static::assertIsInt($pkValue);
 	}
 
 	/**
@@ -146,7 +144,7 @@ class ControllerHelperTest extends Unit {
 	 */
 	public function testGetModelPKNameWorksCorrectly(): void {
 		$pkName = ControllerHelper::getModelPKName($this->testUser);
-		$this->assertEquals('id', $pkName);
+		static::assertEquals('id', $pkName);
 	}
 
 	// =========================================================================================
@@ -166,7 +164,7 @@ class ControllerHelperTest extends Unit {
 		$result = ControllerHelper::validateModelFromPost($model);
 		
 		// Should return null when no POST data
-		$this->assertNull($result);
+		static::assertNull($result);
 	}
 
 	// =========================================================================================
@@ -187,8 +185,8 @@ class ControllerHelperTest extends Unit {
 		$result = ControllerHelper::createModelFromPost($model, $errors);
 		
 		// Should return null when no POST data
-		$this->assertNull($result);
-		$this->assertEmpty($errors);
+		static::assertNull($result);
+		static::assertEmpty($errors);
 	}
 
 	// =========================================================================================
@@ -207,15 +205,15 @@ class ControllerHelperTest extends Unit {
 		$ajaxErrors = ControllerHelper::errorsAjaxFormat($model);
 		
 		// Should return array with HTML input IDs as keys
-		$this->assertIsArray($ajaxErrors);
-		$this->assertArrayHasKey('users-username', $ajaxErrors);
-		$this->assertArrayHasKey('users-login', $ajaxErrors);
-		$this->assertArrayHasKey('users-password', $ajaxErrors);
+		static::assertIsArray($ajaxErrors);
+		static::assertArrayHasKey('users-username', $ajaxErrors);
+		static::assertArrayHasKey('users-login', $ajaxErrors);
+		static::assertArrayHasKey('users-password', $ajaxErrors);
 		
 		// Values should be arrays of error messages
-		$this->assertIsArray($ajaxErrors['users-username']);
-		$this->assertIsArray($ajaxErrors['users-login']);
-		$this->assertIsArray($ajaxErrors['users-password']);
+		static::assertIsArray($ajaxErrors['users-username']);
+		static::assertIsArray($ajaxErrors['users-login']);
+		static::assertIsArray($ajaxErrors['users-password']);
 	}
 
 	/**
@@ -234,8 +232,8 @@ class ControllerHelperTest extends Unit {
 		$ajaxErrors = ControllerHelper::errorsAjaxFormat($model);
 		
 		// Should return empty array
-		$this->assertIsArray($ajaxErrors);
-		$this->assertEmpty($ajaxErrors);
+		static::assertIsArray($ajaxErrors);
+		static::assertEmpty($ajaxErrors);
 	}
 
 	// =========================================================================================
@@ -252,8 +250,8 @@ class ControllerHelperTest extends Unit {
 		];
 		
 		$result = ControllerHelper::Errors2String($longErrors);
-		$this->assertStringContainsString('field:', $result);
-		$this->assertGreaterThan(1000, strlen($result));
+		static::assertStringContainsString('field:', $result);
+		static::assertGreaterThan(1000, strlen($result));
 		
 		// Test with Unicode characters in errors
 		$unicodeErrors = [
@@ -263,9 +261,9 @@ class ControllerHelperTest extends Unit {
 		];
 		
 		$result = ControllerHelper::Errors2String($unicodeErrors);
-		$this->assertStringContainsString('поле:', $result);
-		$this->assertStringContainsString('字段:', $result);
-		$this->assertStringContainsString('フィールド:', $result);
+		static::assertStringContainsString('поле:', $result);
+		static::assertStringContainsString('字段:', $result);
+		static::assertStringContainsString('フィールド:', $result);
 	}
 
 	/**
@@ -283,8 +281,8 @@ class ControllerHelperTest extends Unit {
 		$endTime = microtime(true);
 		
 		// Should complete within reasonable time
-		$this->assertLessThan(1.0, $endTime - $startTime);
-		$this->assertStringContainsString('field_0:', $result);
-		$this->assertStringContainsString('field_999:', $result);
+		static::assertLessThan(1.0, $endTime - $startTime);
+		static::assertStringContainsString('field_0:', $result);
+		static::assertStringContainsString('field_999:', $result);
 	}
 }
