@@ -77,10 +77,17 @@ class DefaultControllerAjaxCest {
 		$I->assertIsArray($response['results']);
 		$I->assertCount(5, $response['results']);
 		
-		// Each result should have id and text fields
+		// Each result should have id and text fields and match our created users
+		$returnedUserIds = [];
 		foreach ($response['results'] as $result) {
 			$I->assertArrayHasKey('id', $result);
 			$I->assertArrayHasKey('text', $result);
+			$returnedUserIds[] = $result['id'];
+		}
+		
+		// Verify all created users are returned in the response
+		foreach ($searchableUsers as $user) {
+			$I->assertContains($user->id, $returnedUserIds, "User {$user->username} should be in search results");
 		}
 	}
 
@@ -609,11 +616,11 @@ class DefaultControllerAjaxCest {
 		
 		$I->amLoggedInAs($authUser);
 		
-		// Act & Assert: Make multiple search requests
-		for ($i = 1; $i <= 5; $i++) {
+		// Act & Assert: Make multiple search requests and verify responses match created users
+		foreach ($testUsers as $index => $user) {
 			$I->haveHttpHeader('X-Requested-With', 'XMLHttpRequest');
 			$I->amOnRoute('users/ajax-search', [
-				'term' => "user_{$i}",
+				'term' => "user_" . ($index + 1),
 				'column' => 'username'
 			]);
 			
@@ -621,6 +628,11 @@ class DefaultControllerAjaxCest {
 			$response = json_decode($I->grabResponse(), true);
 			$I->assertArrayHasKey('results', $response);
 			$I->assertCount(1, $response['results']);
+			
+			// Verify the returned user matches our created user
+			$returnedUser = $response['results'][0];
+			$I->assertEquals($user->id, $returnedUser['id'], "Returned user ID should match created user");
+			$I->assertEquals($user->username, $returnedUser['text'], "Returned username should match created user");
 		}
 	}
 
