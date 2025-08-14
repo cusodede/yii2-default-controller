@@ -153,9 +153,8 @@ class DefaultControllerEdgeCasesCest {
 				($I->grabPageSource() ? 200 : 404) : 404;
 			
 			// Should either be 404 (not found) or 400 (bad request), not 500 (server error)
-			$I->assertTrue(
-				in_array($responseCode, [200, 400, 404], true),
-				"Extreme ID {$id} should not cause server error"
+			$I->assertContains(
+				$responseCode, [200, 400, 404], "Extreme ID {$id} should not cause server error"
 			);
 		}
 	}
