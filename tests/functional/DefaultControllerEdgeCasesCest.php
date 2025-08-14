@@ -591,8 +591,24 @@ class DefaultControllerEdgeCasesCest {
 			$I->amOnRoute($request);
 			
 			// Assert: Should handle gracefully
-			$responseCode = $I->grabResponse() ? 
-				($I->grabPageSource() ? 200 : 404) : 404;
+			// Check that the response code is not 500 (server error)
+			try {
+				$I->seeResponseCodeIs(200);
+				$responseCode = 200;
+			} catch (Exception) {
+				try {
+					$I->seeResponseCodeIs(400);
+					$responseCode = 400;
+				} catch (Exception) {
+					try {
+						$I->seeResponseCodeIs(404);
+						$responseCode = 404;
+					} catch (Exception) {
+						// If none of the expected codes, grab actual response code for assertion
+						$responseCode = 500; // Assume server error if we can't determine
+					}
+				}
+			}
 			
 			// Should not cause server errors
 			$I->assertNotEquals(500, $responseCode, "Malformed request {$request} should not cause server error");
