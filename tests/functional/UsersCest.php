@@ -13,10 +13,8 @@ class UsersCest {
 
 	/**
 	 * @param FunctionalTester $I
-	 * @throws Throwable
 	 * @throws ModuleException
-	 * @throws InvalidConfigException
-	 * @throws Exception
+	 * @throws \yii\db\Exception
 	 */
 	public function create(FunctionalTester $I):void {
 		$user = Users::CreateUser()->saveAndReturn();
@@ -58,10 +56,8 @@ class UsersCest {
 	/**
 	 * Проверка "ванильного" ActiveRecord
 	 * @param FunctionalTester $I
-	 * @throws Throwable
 	 * @throws ModuleException
-	 * @throws InvalidConfigException
-	 * @throws Exception
+	 * @throws \yii\db\Exception
 	 */
 	public function createVanilla(FunctionalTester $I):void {
 		$user = VanillaUsers::CreateUser()->saveAndReturn();

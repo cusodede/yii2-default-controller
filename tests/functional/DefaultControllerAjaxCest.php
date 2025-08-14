@@ -39,12 +39,13 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test AJAX search returns proper JSON response
-	 * 
+	 *
 	 * Verifies that the AJAX search endpoint returns correctly
 	 * formatted JSON data for Select2 and other autocomplete widgets.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testAjaxSearchReturnsJsonResponse(FunctionalTester $I): void {
 		// Arrange: Create test users for searching
@@ -87,12 +88,13 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test AJAX search with different search terms
-	 * 
+	 *
 	 * Verifies that search functionality works with various
 	 * search terms and returns appropriate results.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testAjaxSearchWithVariousTerms(FunctionalTester $I): void {
 		// Arrange: Create diverse test data
@@ -138,11 +140,12 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test AJAX search with empty term
-	 * 
+	 *
 	 * Verifies behavior when search term is empty or null.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testAjaxSearchWithEmptyTerm(FunctionalTester $I): void {
 		// Arrange
@@ -172,11 +175,12 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test AJAX search case insensitivity
-	 * 
+	 *
 	 * Verifies that search works regardless of case.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testAjaxSearchCaseInsensitive(FunctionalTester $I): void {
 		// Arrange
@@ -215,11 +219,12 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test multi-column AJAX search
-	 * 
+	 *
 	 * Verifies that search can work across multiple columns.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testAjaxSearchMultiColumn(FunctionalTester $I): void {
 		// Arrange
@@ -250,12 +255,13 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test modal view rendering
-	 * 
+	 *
 	 * Verifies that AJAX requests for view operations
 	 * return modal-formatted content.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testModalViewRendering(FunctionalTester $I): void {
 		// Arrange
@@ -286,12 +292,13 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test modal create form rendering
-	 * 
+	 *
 	 * Verifies that AJAX requests for create operations
 	 * return modal-formatted forms.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testModalCreateFormRendering(FunctionalTester $I): void {
 		// Arrange
@@ -318,12 +325,13 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test modal edit form rendering
-	 * 
+	 *
 	 * Verifies that AJAX requests for edit operations
 	 * return modal-formatted forms with pre-filled data.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testModalEditFormRendering(FunctionalTester $I): void {
 		// Arrange
@@ -358,12 +366,13 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test AJAX form validation on create
-	 * 
+	 *
 	 * Verifies that AJAX validation requests return
 	 * proper validation error responses.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testAjaxValidationOnCreate(FunctionalTester $I): void {
 		// Arrange
@@ -407,12 +416,13 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test AJAX form validation on edit
-	 * 
+	 *
 	 * Verifies that AJAX validation works correctly
 	 * for edit operations.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testAjaxValidationOnEdit(FunctionalTester $I): void {
 		// Arrange
@@ -452,12 +462,13 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test successful AJAX form submission
-	 * 
+	 *
 	 * Verifies that successful AJAX form submissions
 	 * return appropriate responses.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testSuccessfulAjaxFormSubmission(FunctionalTester $I): void {
 		// Arrange
@@ -510,11 +521,12 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test AJAX request with malformed data
-	 * 
+	 *
 	 * Verifies that malformed AJAX requests are handled gracefully.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testAjaxRequestWithMalformedData(FunctionalTester $I): void {
 		// Arrange
@@ -538,12 +550,13 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test AJAX request timeout simulation
-	 * 
+	 *
 	 * Verifies behavior with large datasets that might
 	 * cause timeout issues.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testAjaxRequestWithLargeDataset(FunctionalTester $I): void {
 		// Arrange: Create large dataset
@@ -574,12 +587,13 @@ class DefaultControllerAjaxCest {
 
 	/**
 	 * Test concurrent AJAX requests
-	 * 
+	 *
 	 * Verifies that multiple simultaneous AJAX requests
 	 * are handled correctly.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testConcurrentAjaxRequests(FunctionalTester $I): void {
 		// Arrange

@@ -41,12 +41,13 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test basic search functionality
-	 * 
+	 *
 	 * Verifies that the search form filters results correctly
 	 * when search criteria are provided.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testBasicSearchFunctionality(FunctionalTester $I): void {
 		// Arrange: Create test users with searchable data
@@ -83,12 +84,13 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test search with multiple criteria
-	 * 
+	 *
 	 * Verifies that search works correctly when multiple
 	 * search fields are used simultaneously.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testSearchWithMultipleCriteria(FunctionalTester $I): void {
 		// Arrange: Create diverse test data
@@ -126,12 +128,13 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test case-insensitive search
-	 * 
+	 *
 	 * Verifies that search functionality works regardless
 	 * of the case of the search terms.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testCaseInsensitiveSearch(FunctionalTester $I): void {
 		// Arrange
@@ -168,12 +171,13 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test partial string search
-	 * 
+	 *
 	 * Verifies that search finds results even when only
 	 * partial strings are provided.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testPartialStringSearch(FunctionalTester $I): void {
 		// Arrange
@@ -209,12 +213,13 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test search with special characters
-	 * 
+	 *
 	 * Verifies that search handles special characters
 	 * and escape sequences correctly.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testSearchWithSpecialCharacters(FunctionalTester $I): void {
 		// Arrange
@@ -259,11 +264,12 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test empty search results
-	 * 
+	 *
 	 * Verifies appropriate handling when search returns no results.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testEmptySearchResults(FunctionalTester $I): void {
 		// Arrange
@@ -298,11 +304,12 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test sorting by different columns
-	 * 
+	 *
 	 * Verifies that grid sorting works correctly for various columns.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testSortingByDifferentColumns(FunctionalTester $I): void {
 		// Arrange: Create users with sortable data
@@ -357,11 +364,12 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test sorting with search filters
-	 * 
+	 *
 	 * Verifies that sorting works correctly when combined with search filters.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testSortingWithSearchFilters(FunctionalTester $I): void {
 		// Arrange
@@ -406,12 +414,13 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test pagination with large dataset
-	 * 
+	 *
 	 * Verifies that pagination works correctly when there are
 	 * more records than fit on a single page.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testPaginationWithLargeDataset(FunctionalTester $I): void {
 		// Arrange: Create enough users to trigger pagination
@@ -447,12 +456,13 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test pagination with search filters
-	 * 
+	 *
 	 * Verifies that pagination works correctly when search
 	 * filters are applied.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testPaginationWithSearchFilters(FunctionalTester $I): void {
 		// Arrange: Create mixed dataset
@@ -498,12 +508,13 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test date range filtering (if applicable)
-	 * 
+	 *
 	 * Verifies filtering by date ranges works correctly.
 	 * Note: This assumes your model has date fields to filter by.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testAdvancedFilteringCapabilities(FunctionalTester $I): void {
 		// Arrange
@@ -541,12 +552,13 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test filter persistence across navigation
-	 * 
+	 *
 	 * Verifies that applied filters are maintained when
 	 * navigating through pages or performing actions.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testFilterPersistenceAcrossNavigation(FunctionalTester $I): void {
 		// Arrange
@@ -592,12 +604,13 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test search performance with large dataset
-	 * 
+	 *
 	 * Verifies that search operations complete within
 	 * reasonable time limits even with large datasets.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testSearchPerformanceWithLargeDataset(FunctionalTester $I): void {
 		// Arrange: Create substantial dataset
@@ -634,12 +647,13 @@ class DefaultControllerSearchCest {
 
 	/**
 	 * Test search with SQL injection attempts
-	 * 
+	 *
 	 * Verifies that the search functionality properly escapes
 	 * user input to prevent SQL injection attacks.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testSearchSqlInjectionPrevention(FunctionalTester $I): void {
 		// Arrange

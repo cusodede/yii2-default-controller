@@ -42,12 +42,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test index page displays correctly with no data
-	 * 
+	 *
 	 * Verifies that the index page renders properly when no records exist,
 	 * showing appropriate empty state and navigation elements.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testIndexPageWithNoData(FunctionalTester $I): void {
 		// Arrange: Create a user to authenticate with
@@ -67,12 +68,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test index page displays data correctly
-	 * 
+	 *
 	 * Verifies that when records exist, they are properly displayed
 	 * in the grid with correct formatting and action buttons.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testIndexPageWithData(FunctionalTester $I): void {
 		// Arrange: Create test users
@@ -113,12 +115,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test create page loads correctly
-	 * 
+	 *
 	 * Verifies that the create form is displayed with all necessary
 	 * fields and proper form structure.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testCreatePageLoadsCorrectly(FunctionalTester $I): void {
 		// Arrange
@@ -142,12 +145,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test successful user creation
-	 * 
+	 *
 	 * Tests the complete create workflow with valid data,
 	 * verifying form submission, redirect, and data persistence.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testCreateUserSuccessfully(FunctionalTester $I): void {
 		// Arrange
@@ -183,12 +187,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test create with validation errors
-	 * 
+	 *
 	 * Verifies that validation errors are properly displayed
 	 * when invalid data is submitted.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testCreateWithValidationErrors(FunctionalTester $I): void {
 		// Arrange
@@ -211,9 +216,9 @@ class DefaultControllerCrudCest {
 		$I->seeInCurrentUrl('users/create');
 		
 		// Should display validation error messages
-		$I->see('cannot be blank', );
-		$I->see('cannot be blank', );
-		$I->see('cannot be blank', );
+		$I->see('cannot be blank');
+		$I->see('cannot be blank');
+		$I->see('cannot be blank');
 		
 		// Should not create any new records
 		$I->assertEquals($initialUserCount, Users::find()->count());
@@ -221,12 +226,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test create with duplicate login
-	 * 
+	 *
 	 * Tests behavior when attempting to create a user with
 	 * a login that already exists (if uniqueness is enforced).
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testCreateWithSpecialCharacters(FunctionalTester $I): void {
 		// Arrange
@@ -261,12 +267,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test view page displays user data correctly
-	 * 
+	 *
 	 * Verifies that the view page shows all user information
 	 * with proper formatting and navigation elements.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testViewUserDetails(FunctionalTester $I): void {
 		// Arrange
@@ -295,12 +302,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test view page with non-existent ID
-	 * 
+	 *
 	 * Verifies that appropriate error handling occurs
 	 * when attempting to view a non-existent record.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testViewNonExistentUser(FunctionalTester $I): void {
 		// Arrange
@@ -317,11 +325,12 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test view page without ID parameter
-	 * 
+	 *
 	 * Verifies error handling when no ID is provided.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testViewWithoutIdParameter(FunctionalTester $I): void {
 		// Arrange
@@ -341,12 +350,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test edit page loads with existing data
-	 * 
+	 *
 	 * Verifies that the edit form is pre-populated
 	 * with existing user data.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testEditPageLoadsWithData(FunctionalTester $I): void {
 		// Arrange
@@ -373,12 +383,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test successful user update
-	 * 
+	 *
 	 * Tests the complete update workflow with valid data,
 	 * verifying form submission, redirect, and data persistence.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testUpdateUserSuccessfully(FunctionalTester $I): void {
 		// Arrange
@@ -419,12 +430,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test update with validation errors
-	 * 
+	 *
 	 * Verifies that validation errors are properly displayed
 	 * during update operations.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testUpdateWithValidationErrors(FunctionalTester $I): void {
 		// Arrange
@@ -457,9 +469,9 @@ class DefaultControllerCrudCest {
 		$I->seeInCurrentUrl("users/edit?id={$testUser->id}");
 		
 		// Should display validation errors
-		$I->see('cannot be blank', );
-		$I->see('cannot be blank', );
-		$I->see('cannot be blank', );
+		$I->see('cannot be blank');
+		$I->see('cannot be blank');
+		$I->see('cannot be blank');
 		
 		// Original data should be unchanged
 		$testUser->refresh();
@@ -470,12 +482,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test edit with non-existent ID
-	 * 
+	 *
 	 * Verifies error handling when attempting to edit
 	 * a non-existent record.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testEditNonExistentUser(FunctionalTester $I): void {
 		// Arrange
@@ -496,12 +509,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test successful user deletion
-	 * 
+	 *
 	 * Verifies that users can be deleted and are properly
 	 * removed from the database.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testDeleteUserSuccessfully(FunctionalTester $I): void {
 		// Arrange
@@ -532,12 +546,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test delete with non-existent ID
-	 * 
+	 *
 	 * Verifies error handling when attempting to delete
 	 * a non-existent record.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testDeleteNonExistentUser(FunctionalTester $I): void {
 		// Arrange
@@ -554,11 +569,12 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test delete without ID parameter
-	 * 
+	 *
 	 * Verifies error handling when no ID is provided for deletion.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testDeleteWithoutIdParameter(FunctionalTester $I): void {
 		// Arrange
@@ -578,12 +594,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test data persistence across operations
-	 * 
+	 *
 	 * Comprehensive test that creates, reads, updates, and deletes
 	 * a record to verify complete data integrity.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testCompleteDataLifecycle(FunctionalTester $I): void {
 		// Arrange
@@ -634,12 +651,13 @@ class DefaultControllerCrudCest {
 
 	/**
 	 * Test Unicode and special character handling
-	 * 
+	 *
 	 * Verifies that the system properly handles international
 	 * characters and special symbols.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testUnicodeAndSpecialCharacterHandling(FunctionalTester $I): void {
 		// Arrange

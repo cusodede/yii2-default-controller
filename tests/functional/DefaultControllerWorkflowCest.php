@@ -40,12 +40,13 @@ class DefaultControllerWorkflowCest {
 
 	/**
 	 * Test complete user management workflow
-	 * 
+	 *
 	 * Simulates a complete user management scenario from initial
 	 * navigation to final record management including all CRUD operations.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testCompleteUserManagementWorkflow(FunctionalTester $I): void {
 		// Arrange: Set up authentication
@@ -131,12 +132,13 @@ class DefaultControllerWorkflowCest {
 
 	/**
 	 * Test bulk user management workflow
-	 * 
+	 *
 	 * Simulates managing multiple users in sequence,
 	 * testing efficiency and consistency of operations.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testBulkUserManagementWorkflow(FunctionalTester $I): void {
 		// Arrange
@@ -210,12 +212,13 @@ class DefaultControllerWorkflowCest {
 
 	/**
 	 * Test user workflow with validation errors
-	 * 
+	 *
 	 * Simulates real user scenarios where validation errors occur
 	 * and tests the recovery and correction workflow.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testUserWorkflowWithValidationErrors(FunctionalTester $I): void {
 		// Arrange
@@ -289,12 +292,13 @@ class DefaultControllerWorkflowCest {
 
 	/**
 	 * Test workflow across different controller types
-	 * 
+	 *
 	 * Tests integration between different DefaultController implementations
 	 * (e.g., Users vs VanillaUsers) to ensure consistency.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testWorkflowAcrossDifferentControllerTypes(FunctionalTester $I): void {
 		// Arrange
@@ -349,12 +353,13 @@ class DefaultControllerWorkflowCest {
 
 	/**
 	 * Test workflow with session persistence
-	 * 
+	 *
 	 * Verifies that user sessions and state are maintained
 	 * across different operations and page navigations.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testWorkflowWithSessionPersistence(FunctionalTester $I): void {
 		// Arrange
@@ -404,12 +409,13 @@ class DefaultControllerWorkflowCest {
 
 	/**
 	 * Test workflow recovery from various error conditions
-	 * 
+	 *
 	 * Simulates error scenarios and tests how well users
 	 * can recover and continue their workflow.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testWorkflowErrorRecoveryScenarios(FunctionalTester $I): void {
 		// Arrange
@@ -450,12 +456,13 @@ class DefaultControllerWorkflowCest {
 
 	/**
 	 * Test workflow with concurrent user operations
-	 * 
+	 *
 	 * Simulates scenarios where multiple operations might
 	 * conflict or interfere with each other.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testWorkflowWithConcurrentOperations(FunctionalTester $I): void {
 		// Arrange
@@ -508,12 +515,13 @@ class DefaultControllerWorkflowCest {
 
 	/**
 	 * Test workflow performance with realistic data volumes
-	 * 
+	 *
 	 * Verifies that common user workflows complete within
 	 * acceptable time limits under realistic load conditions.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testWorkflowPerformanceWithRealisticData(FunctionalTester $I): void {
 		// Arrange: Create realistic dataset

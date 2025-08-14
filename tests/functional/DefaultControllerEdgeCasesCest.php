@@ -4,6 +4,7 @@ declare(strict_types = 1);
 use app\models\Users;
 use Codeception\Exception\ModuleException;
 use yii\base\InvalidConfigException;
+use yii\db\StaleObjectException;
 
 /**
  * Comprehensive functional tests for DefaultController edge cases and error scenarios
@@ -41,12 +42,13 @@ class DefaultControllerEdgeCasesCest {
 
 	/**
 	 * Test handling of maximum length input values
-	 * 
+	 *
 	 * Verifies that the system properly handles input data
 	 * at the maximum allowed field lengths.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testMaximumLengthInputHandling(FunctionalTester $I): void {
 		// Arrange
@@ -83,11 +85,12 @@ class DefaultControllerEdgeCasesCest {
 
 	/**
 	 * Test handling of minimum boundary values
-	 * 
+	 *
 	 * Verifies behavior with minimal valid input data.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testMinimumBoundaryValueHandling(FunctionalTester $I): void {
 		// Arrange
@@ -122,11 +125,12 @@ class DefaultControllerEdgeCasesCest {
 
 	/**
 	 * Test handling of extreme ID values
-	 * 
+	 *
 	 * Tests behavior with very large, very small, and edge case ID values.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testExtremeIdValueHandling(FunctionalTester $I): void {
 		// Arrange
@@ -165,12 +169,13 @@ class DefaultControllerEdgeCasesCest {
 
 	/**
 	 * Test handling of Unicode and special characters
-	 * 
+	 *
 	 * Verifies that the system properly handles international
 	 * characters, emojis, and special Unicode sequences.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testUnicodeAndSpecialCharacterHandling(FunctionalTester $I): void {
 		// Arrange
@@ -234,12 +239,13 @@ class DefaultControllerEdgeCasesCest {
 
 	/**
 	 * Test handling of HTML and script injection attempts
-	 * 
+	 *
 	 * Verifies that user input is properly escaped and doesn't
 	 * result in XSS vulnerabilities.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testHtmlAndScriptInjectionPrevention(FunctionalTester $I): void {
 		// Arrange
@@ -312,12 +318,13 @@ class DefaultControllerEdgeCasesCest {
 
 	/**
 	 * Test handling of concurrent modifications
-	 * 
+	 *
 	 * Simulates scenarios where the same record might be
 	 * modified simultaneously by different users/sessions.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testConcurrentModificationHandling(FunctionalTester $I): void {
 		// Arrange: Create test user
@@ -383,12 +390,14 @@ class DefaultControllerEdgeCasesCest {
 
 	/**
 	 * Test handling of deleted records during operations
-	 * 
+	 *
 	 * Simulates scenarios where a record is deleted while
 	 * another user is trying to access it.
-	 * 
-	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 *
+	 * @throws ModuleException
+	 * @throws Throwable
+	 * @throws Exception
+	 * @throws StaleObjectException
 	 */
 	public function testDeletedRecordAccessHandling(FunctionalTester $I): void {
 		// Arrange
@@ -425,12 +434,13 @@ class DefaultControllerEdgeCasesCest {
 
 	/**
 	 * Test handling of extremely large datasets
-	 * 
+	 *
 	 * Verifies that the system maintains acceptable performance
 	 * and doesn't crash with large amounts of data.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testExtremelyLargeDatasetHandling(FunctionalTester $I): void {
 		// Arrange: Create large dataset
@@ -476,12 +486,13 @@ class DefaultControllerEdgeCasesCest {
 
 	/**
 	 * Test rapid sequential operations
-	 * 
+	 *
 	 * Simulates a user performing many operations quickly
 	 * to test for race conditions and resource handling.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testRapidSequentialOperations(FunctionalTester $I): void {
 		// Arrange
@@ -549,12 +560,13 @@ class DefaultControllerEdgeCasesCest {
 
 	/**
 	 * Test malformed request handling
-	 * 
+	 *
 	 * Verifies that the system handles malformed requests gracefully
 	 * without crashing or exposing sensitive information.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testMalformedRequestHandling(FunctionalTester $I): void {
 		// Arrange
@@ -600,12 +612,13 @@ class DefaultControllerEdgeCasesCest {
 
 	/**
 	 * Test system behavior under memory pressure
-	 * 
+	 *
 	 * Simulates operations that might consume significant memory
 	 * to ensure graceful handling of resource constraints.
-	 * 
+	 *
 	 * @param FunctionalTester $I
-	 * @throws Exception|ModuleException|InvalidConfigException
+	 * @throws ModuleException
+	 * @throws \yii\db\Exception
 	 */
 	public function testMemoryPressureHandling(FunctionalTester $I): void {
 		// Arrange
