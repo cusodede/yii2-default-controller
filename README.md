@@ -1,6 +1,6 @@
 # yii2-default-controller
 
-[![Build Status](https://github.com/cusodede/yii2-default-controller/actions/workflows/ci_with_postgresql.yml/badge.svg)](https://github.com/cusodede/yii2-default-controller/actions)
+[![Build Status](https://github.com/cusodede/yii2-default-controller/actions/workflows/ci.yml/badge.svg)](https://github.com/cusodede/yii2-default-controller/actions)
 
 Компонент, расширяющий функционал и удобство использования web-контроллеров Yii2.
 
