@@ -66,13 +66,13 @@ class ControllerHelper extends VendorControllerHelper {
 	/**
 	 * @param ActiveRecordInterface|Model $model
 	 * @param array $errors Возвращаемый список ошибок.
-	 * @param null|bool $AJAXErrorsFormat Формат возврата ошибок: true: для ajax-валидации, false - as is, null (default) - в зависимости от типа запроса
+	 * @param bool|null $AJAXErrorsFormat Формат возврата ошибок: true: для ajax-валидации, false - as is, null (default) - в зависимости от типа запроса
 	 * @param array $relationAttributes Массив с перечисление relational-моделей, приходящих отдельной формой
 	 * @return null|bool true: модель сохранена, false: модель не сохранена, null: постинга не было
 	 * @throws DbException
 	 * @param-out array $errors На выходе всегда будет массив
 	 */
-	public static function createModelFromPost(Model|ActiveRecordInterface $model, array &$errors = [], bool $AJAXErrorsFormat = null, array $relationAttributes = []):?bool {
+	public static function createModelFromPost(Model|ActiveRecordInterface $model, array &$errors = [], ?bool $AJAXErrorsFormat = null, array $relationAttributes = []):?bool {
 		$errors = [];
 		if ($model->load(Yii::$app->request->post()) && null !== $transaction = Yii::$app->getDb()->beginTransaction()) {
 			/**
