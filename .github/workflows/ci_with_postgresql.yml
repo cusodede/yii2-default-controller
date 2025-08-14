@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ 80, 81 ]
+        php: [ 80, 84 ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
