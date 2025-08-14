@@ -1,5 +1,4 @@
 <?php
-/** @noinspection PhpUndefinedFieldInspection */
 declare(strict_types = 1);
 
 use app\models\Users;
