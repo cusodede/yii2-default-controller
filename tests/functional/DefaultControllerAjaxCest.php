@@ -490,7 +490,7 @@ class DefaultControllerAjaxCest {
 		]);
 		
 		// Assert: Should get a response (either 200 or 302 redirect)
-		$responseCodeCheck = function() use ($I) {
+		$responseCodeCheck = static function() use ($I) {
 			try {
 				$I->seeResponseCodeIs(200);
 				return true;

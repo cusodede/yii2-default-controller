@@ -67,7 +67,7 @@ class DefaultControllerEdgeCasesCest {
 		$I->seeResponseCodeIs(200);
 		
 		$currentUrl = $I->grabFromCurrentUrl();
-		if (strpos($currentUrl, 'users/index') !== false) {
+		if (false !== strpos($currentUrl, 'users/index')) {
 			// If redirected to index, creation succeeded - verify the user was created
 			$createdUser = Users::find()->where(['like', 'username', 'edge_'])->orderBy('id DESC')->one();
 			$I->assertNotNull($createdUser, 'User should be created in database');
@@ -110,7 +110,7 @@ class DefaultControllerEdgeCasesCest {
 		
 		// Either succeeds or shows validation errors for minimum length
 		$currentUrl = $I->grabFromCurrentUrl();
-		if (strpos($currentUrl, 'users/index') !== false) {
+		if (false !== strpos($currentUrl, 'users/index')) {
 			// If redirected to index, creation succeeded - verify the user was created
 			$createdUser = Users::findOne(['username' => $minimalData['username']]);
 			$I->assertNotNull($createdUser, 'User should be created in database');
@@ -214,7 +214,7 @@ class DefaultControllerEdgeCasesCest {
 			$I->seeResponseCodeIs(200);
 			
 			$currentUrl = $I->grabFromCurrentUrl();
-			if (strpos($currentUrl, 'users/index') !== false) {
+			if (false !== strpos($currentUrl, 'users/index')) {
 				// If redirected to index, creation succeeded - verify data integrity
 				$I->see($testData['username']);
 				
@@ -285,7 +285,7 @@ class DefaultControllerEdgeCasesCest {
 			
 			// Check if user was created and data was escaped
 			$currentUrl = $I->grabFromCurrentUrl();
-			if (strpos($currentUrl, 'users/index') !== false) {
+			if (false !== strpos($currentUrl, 'users/index')) {
 				// If redirected to index, creation succeeded - verify data was escaped properly
 				$response = $I->grabResponse();
 				
@@ -640,7 +640,7 @@ class DefaultControllerEdgeCasesCest {
 			
 			// Either succeeds or fails gracefully with validation error
 			$currentUrl = $I->grabFromCurrentUrl();
-			if (strpos($currentUrl, 'users/index') !== false) {
+			if (false !== strpos($currentUrl, 'users/index')) {
 				// If redirected to index, creation succeeded - verify the user was created
 				$createdUser = Users::find()->where(['like', 'username', 'boundary_memory_test_'])->orderBy('id DESC')->one();
 				$I->assertNotNull($createdUser, 'User should be created in database');
