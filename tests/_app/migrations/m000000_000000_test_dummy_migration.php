@@ -14,7 +14,7 @@ class m000000_000000_test_dummy_migration extends Migration {
 	public function safeUp() {
 		$this->createTable('dummy', [
 			'id' => $this->primaryKey(),
-			'dummy' => $this->string(255)->null()->comment('dummy'),
+			'dummy' => $this->string(255)->null(), // dummy
 		]);
 	}
 
