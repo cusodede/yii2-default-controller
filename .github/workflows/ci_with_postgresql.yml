@@ -6,7 +6,7 @@ on:
     branches: [ master ]
 
 env:
-  COMPOSE_PROJECT_NAME: yii2-s3-module
+  COMPOSE_PROJECT_NAME: yii2-default-controller
   COMPOSE_FILE: tests/docker-compose.yml
 jobs:
   phpunit:
