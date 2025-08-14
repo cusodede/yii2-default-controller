@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 use app\models\Users;
 use Codeception\Exception\ModuleException;
+use yii\db\Exception as ExceptionAlias;
 
 /**
  * Comprehensive functional tests for DefaultController AJAX interactions
@@ -42,7 +43,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testAjaxSearchReturnsJsonResponse(FunctionalTester $I): void {
 		// Arrange: Create test users for searching
@@ -91,7 +92,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testAjaxSearchWithVariousTerms(FunctionalTester $I): void {
 		// Arrange: Create diverse test data
@@ -142,7 +143,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testAjaxSearchWithEmptyTerm(FunctionalTester $I): void {
 		// Arrange
@@ -177,7 +178,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testAjaxSearchCaseInsensitive(FunctionalTester $I): void {
 		// Arrange
@@ -221,7 +222,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testAjaxSearchMultiColumn(FunctionalTester $I): void {
 		// Arrange
@@ -258,7 +259,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testModalViewRendering(FunctionalTester $I): void {
 		// Arrange
@@ -295,7 +296,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testModalCreateFormRendering(FunctionalTester $I): void {
 		// Arrange
@@ -328,7 +329,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testModalEditFormRendering(FunctionalTester $I): void {
 		// Arrange
@@ -369,7 +370,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testAjaxValidationOnCreate(FunctionalTester $I): void {
 		// Arrange
@@ -419,7 +420,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testAjaxValidationOnEdit(FunctionalTester $I): void {
 		// Arrange
@@ -465,7 +466,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testSuccessfulAjaxFormSubmission(FunctionalTester $I): void {
 		// Arrange
@@ -523,7 +524,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testAjaxRequestWithMalformedData(FunctionalTester $I): void {
 		// Arrange
@@ -553,7 +554,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testAjaxRequestWithLargeDataset(FunctionalTester $I): void {
 		// Arrange: Create large dataset
@@ -590,7 +591,7 @@ class DefaultControllerAjaxCest {
 	 *
 	 * @param FunctionalTester $I
 	 * @throws ModuleException
-	 * @throws \yii\db\Exception
+	 * @throws ExceptionAlias
 	 */
 	public function testConcurrentAjaxRequests(FunctionalTester $I): void {
 		// Arrange
