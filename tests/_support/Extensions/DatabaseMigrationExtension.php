@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Extensions;
 
 use Codeception\Events;
+use Codeception\Exception\ModuleRequireException;
 use Codeception\Extension;
 use Codeception\Module\Cli;
 
@@ -16,6 +17,10 @@ class DatabaseMigrationExtension extends Extension {
 		Events::TEST_BEFORE => 'beforeSuite'
 	];
 
+	/**
+	 * @return void
+	 * @throws ModuleRequireException
+	 */
 	public function beforeSuite():void {
 		/** @var Cli $cli */
 		$cli = $this->getModule('Cli');
