@@ -14,7 +14,7 @@ $modelName = $model->formName();
 ?>
 <?php
 Modal::begin([
-	'id' => "{$modelName}-modal-edit-{$model->getPrimaryKey(false)}",
+	'id' => "{$modelName}-modal-edit-{$model->getPrimaryKey()}",
 	'size' => Modal::SIZE_LARGE,
 	'title' => $this->title,
 	'footer' => $this->render('../subviews/editPanelFooter', [

@@ -9,6 +9,9 @@ on:
     paths-ignore:
       - 'README.md'
 
+env:
+  COMPOSE_PROJECT_NAME: yii2-default-controller
+  COMPOSE_FILE: tests/docker-compose.yml
 jobs:
   codeception:
     name: PHP ${{ matrix.php }}

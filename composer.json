@@ -38,7 +38,8 @@
 		"codeception/module-filesystem": "^3.0.0",
 		"codeception/module-rest": "^3.4.0",
 		"vlucas/phpdotenv": "^5.4.1",
-		"codeception/module-cli": "^2.0.0"
+		"codeception/module-cli": "^2.0.0",
+		"pozitronik/yii2-badgewidget": "dev-master"
 	},
 	"autoload": {
 		"psr-4": {

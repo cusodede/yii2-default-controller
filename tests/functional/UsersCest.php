@@ -1,11 +1,9 @@
 <?php
-/** @noinspection PhpUndefinedFieldInspection */
 declare(strict_types = 1);
 
 use app\models\Users;
 use app\models\VanillaUsers;
 use Codeception\Exception\ModuleException;
-use yii\base\InvalidConfigException;
 
 /**
  * Class ManagersCest
@@ -14,10 +12,8 @@ class UsersCest {
 
 	/**
 	 * @param FunctionalTester $I
-	 * @throws Throwable
 	 * @throws ModuleException
-	 * @throws InvalidConfigException
-	 * @throws Exception
+	 * @throws \yii\db\Exception
 	 */
 	public function create(FunctionalTester $I):void {
 		$user = Users::CreateUser()->saveAndReturn();
@@ -25,7 +21,7 @@ class UsersCest {
 		$I->amLoggedInAs($user);
 		$I->amOnRoute('users/create');
 		$I->seeResponseCodeIs(200);
-		$I->submitForm("#users-create", [
+		$I->submitForm("form", [
 			'Users' => [
 				'username' => 'Test Successful',
 				'login' => 'test_user_2',
@@ -59,10 +55,8 @@ class UsersCest {
 	/**
 	 * Проверка "ванильного" ActiveRecord
 	 * @param FunctionalTester $I
-	 * @throws Throwable
 	 * @throws ModuleException
-	 * @throws InvalidConfigException
-	 * @throws Exception
+	 * @throws \yii\db\Exception
 	 */
 	public function createVanilla(FunctionalTester $I):void {
 		$user = VanillaUsers::CreateUser()->saveAndReturn();
@@ -70,7 +64,7 @@ class UsersCest {
 		$I->amLoggedInAs($user);
 		$I->amOnRoute('vanilla-users/create');
 		$I->seeResponseCodeIs(200);
-		$I->submitForm("#users-create", [
+		$I->submitForm("form", [
 			'VanillaUsers' => [
 				'username' => 'Test Successful',
 				'login' => 'test_user_3',

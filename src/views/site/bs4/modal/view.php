@@ -13,7 +13,7 @@ use yii\web\View;
 $modelName = $model->formName();
 ?>
 <?php Modal::begin([
-	'id' => "{$modelName}-modal-view-{$model->getPrimaryKey(false)}",
+	'id' => "{$modelName}-modal-view-{$model->getPrimaryKey()}",
 	'size' => Modal::SIZE_LARGE,
 	'title' => $this->title,
 	'options' => [
