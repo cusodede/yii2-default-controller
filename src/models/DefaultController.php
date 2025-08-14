@@ -78,7 +78,7 @@ abstract class DefaultController extends Controller {
 	/**
 	 * Название контроллера
 	 */
-	protected const DEFAULT_TITLE = null;
+	protected const DEFAULT_TITLE = '';
 
 	/**
 	 * Дефолтные названия экшенов
