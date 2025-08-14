@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 use app\models\Users;
 use Codeception\Exception\ModuleException;
-use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 
 /**

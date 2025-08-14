@@ -4,7 +4,6 @@ declare(strict_types = 1);
 use app\models\Users;
 use app\models\VanillaUsers;
 use Codeception\Exception\ModuleException;
-use yii\base\InvalidConfigException;
 
 /**
  * Comprehensive functional tests for DefaultController user workflows
