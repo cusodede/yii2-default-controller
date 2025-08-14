@@ -87,7 +87,7 @@ class DefaultControllerAjaxCest {
 		
 		// Verify all created users are returned in the response
 		foreach ($searchableUsers as $user) {
-			$I->assertContains($user->id, $returnedUserIds, "User {$user->username} should be in search results");
+			$I->assertContains((string)$user->id, $returnedUserIds, "User {$user->username} should be in search results");
 		}
 	}
 
@@ -631,7 +631,7 @@ class DefaultControllerAjaxCest {
 			
 			// Verify the returned user matches our created user
 			$returnedUser = $response['results'][0];
-			$I->assertEquals($user->id, $returnedUser['id'], "Returned user ID should match created user");
+			$I->assertEquals((string)$user->id, $returnedUser['id'], "Returned user ID should match created user");
 			$I->assertEquals($user->username, $returnedUser['text'], "Returned username should match created user");
 		}
 	}
